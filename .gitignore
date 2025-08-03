@@ -1,0 +1,28 @@
+cat > .gitignore << 'EOF'
+# Archivos compilados
+*.o
+*.out
+*.exe
+
+# Directorios de compilación
+obj/
+bin/
+
+# Frames generados
+frame_*.pbm
+frame_*.ppm
+
+# Archivos temporales
+*.tmp
+*~
+.*.swp
+
+# Videos generados
+*.mp4
+*.gif
+*.avi
+EOF
+
+# Agregar .gitignore al commit
+git add .gitignore
+git commit -m "chore: add .gitignore for build artifacts and generated frames"
