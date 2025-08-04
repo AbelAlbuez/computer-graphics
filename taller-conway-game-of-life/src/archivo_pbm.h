@@ -10,7 +10,7 @@
 
 class ArchivoPBM {
 public:
-    static Tablero leer(const std::string& ruta);
+    static Tablero leer(const std::string& ruta); 
     static void escribir(const std::string& ruta, const Tablero& tablero);
 
     static const float PIXEL_VIVO;

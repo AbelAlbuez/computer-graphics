@@ -3,7 +3,7 @@
 
 #include <string>
 #include "tablero.h"
-#include "FrameBuffer.h"
+#include "FrameBuffer.h" 
 
 class GeneradorFrames {
 public:

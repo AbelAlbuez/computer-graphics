@@ -6,7 +6,7 @@
 #define __GENERADOR_FRAMES_H__
 
 #include <string>
-#include "tablero.h"
+#include "tablero.h" 
 #include "FrameBuffer.h"
 
 class GeneradorFrames {

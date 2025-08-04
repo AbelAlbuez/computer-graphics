@@ -10,7 +10,7 @@
 #include <iostream>
 #include <stdexcept>
 
-// Constantes útiles si se desea representar visualmente
+// Constantes útiles si se desea representar visualmente 
 const float ArchivoPBM::PIXEL_VIVO = 0.0f;
 const float ArchivoPBM::PIXEL_MUERTO = 1.0f;
 
