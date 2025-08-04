@@ -1,4 +1,6 @@
-// juego_vida.h
+// =========================================================================
+// @author Abel Albuez
+// =========================================================================
 #ifndef __JUEGO_VIDA_H__
 #define __JUEGO_VIDA_H__
 
@@ -10,7 +12,6 @@ public:
     
 private:
     static int contarVecinos(const Tablero& tablero, int x, int y);
-    
     static bool aplicarReglas(bool celula_viva, int num_vecinos);
 };
 

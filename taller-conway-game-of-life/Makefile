@@ -15,18 +15,19 @@ BIN_DIR = bin
 # Nombre del ejecutable
 TARGET = $(BIN_DIR)/juego_vida
 
-# ACTUALIZADO: Incluir archivo_pbm.cpp
+# Agregar a SOURCES
 SOURCES = $(SRC_DIR)/main.cpp \
           $(SRC_DIR)/tablero.cpp \
           $(SRC_DIR)/archivo_pbm.cpp \
+          $(SRC_DIR)/juego_vida.cpp \
           $(SRC_DIR)/FrameBuffer.cxx
 
-# ACTUALIZADO: Incluir archivo_pbm.o
+# Agregar a OBJECTS
 OBJECTS = $(OBJ_DIR)/main.o \
           $(OBJ_DIR)/tablero.o \
           $(OBJ_DIR)/archivo_pbm.o \
+          $(OBJ_DIR)/juego_vida.o \
           $(OBJ_DIR)/FrameBuffer.o
-
 # Headers disponibles
 HEADERS = $(SRC_DIR)/tablero.h \
           $(SRC_DIR)/archivo_pbm.h \
@@ -59,6 +60,12 @@ $(OBJ_DIR)/tablero.o: $(SRC_DIR)/tablero.cpp $(SRC_DIR)/tablero.h
 $(OBJ_DIR)/archivo_pbm.o: $(SRC_DIR)/archivo_pbm.cpp $(SRC_DIR)/archivo_pbm.h
 	@echo "Compilando archivo_pbm.cpp..."
 	$(CXX) $(CXXFLAGS) -c $< -o $@
+
+# Agregar regla de compilación
+$(OBJ_DIR)/juego_vida.o: $(SRC_DIR)/juego_vida.cpp $(SRC_DIR)/juego_vida.h
+	@echo "Compilando juego_vida.cpp..."
+	$(CXX) $(CXXFLAGS) -c $< -o $@
+
 
 $(OBJ_DIR)/FrameBuffer.o: $(SRC_DIR)/FrameBuffer.cxx $(SRC_DIR)/FrameBuffer.h
 	@echo "Compilando FrameBuffer.cxx..."

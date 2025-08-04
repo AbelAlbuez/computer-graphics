@@ -10,7 +10,7 @@
 // Incluir nuestros módulos
 #include "tablero.h"
 #include "archivo_pbm.h"
-// TODO: #include "juego_vida.h"
+#include "juego_vida.h"
 // TODO: #include "generador_frames.h"
 // TODO: #include "utilidades.h"
 
@@ -89,25 +89,22 @@ int main(int argc, char *argv[])
 
     try
     {
-        // ACTUALIZADO: Ahora podemos leer archivos PBM reales!
+        // Leer archivo PBM
         std::cout << "\n=== Leyendo archivo PBM ===" << std::endl;
-
-        // Leer el archivo PBM
         Tablero tablero_inicial = ArchivoPBM::leer(archivo_entrada);
 
-        // Verificar si se leyó correctamente
         if (tablero_inicial.obtenerAncho() == 0 || tablero_inicial.obtenerAlto() == 0)
         {
             std::cerr << "Error: No se pudo leer el archivo PBM" << std::endl;
             return EXIT_FAILURE;
         }
 
-        // Mostrar información del tablero
+        // Mostrar información
         std::cout << "Tablero cargado: "
                   << tablero_inicial.obtenerAncho() << "x"
                   << tablero_inicial.obtenerAlto() << std::endl;
 
-        // Contar células vivas
+        // Contar células vivas iniciales
         int celulas_vivas = 0;
         for (int y = 0; y < tablero_inicial.obtenerAlto(); y++)
         {
@@ -119,21 +116,70 @@ int main(int argc, char *argv[])
                 }
             }
         }
-        std::cout << "Células vivas: " << celulas_vivas << std::endl;
+        std::cout << "Células vivas iniciales: " << celulas_vivas << std::endl;
 
-        // Si el tablero es pequeño, mostrarlo
+        // Mostrar tablero inicial si es pequeño
         if (tablero_inicial.obtenerAncho() <= 20 && tablero_inicial.obtenerAlto() <= 20)
         {
-            std::cout << "\nVisualizando tablero inicial:" << std::endl;
+            std::cout << "\nTablero inicial:" << std::endl;
             tablero_inicial.mostrar();
         }
 
-        // Probar escritura
-        std::cout << "\n=== Prueba de escritura ===" << std::endl;
-        ArchivoPBM::escribir("test_output.pbm", tablero_inicial);
+        // NUEVO: Probar evolución del Juego de la Vida
+        std::cout << "\n=== Probando Juego de la Vida ===" << std::endl;
 
-        // TODO: Cuando tengamos los otros módulos
-        std::cout << "\n[NOTA] Juego de Vida y Generador de Frames pendientes" << std::endl;
+        // Evolucionar una vez
+        Tablero siguiente = JuegoVida::evolucionar(tablero_inicial);
+
+        // Contar células vivas después
+        int celulas_vivas_siguiente = 0;
+        for (int y = 0; y < siguiente.obtenerAlto(); y++)
+        {
+            for (int x = 0; x < siguiente.obtenerAncho(); x++)
+            {
+                if (siguiente.obtener(x, y))
+                {
+                    celulas_vivas_siguiente++;
+                }
+            }
+        }
+
+        std::cout << "Células vivas después de evolucionar: " << celulas_vivas_siguiente << std::endl;
+
+        if (siguiente.obtenerAncho() <= 20 && siguiente.obtenerAlto() <= 20)
+        {
+            std::cout << "\nTablero después de 1 generación:" << std::endl;
+            siguiente.mostrar();
+        }
+
+        // NUEVO: Probar varias generaciones
+        std::cout << "\n=== Evolución de 5 generaciones ===" << std::endl;
+        Tablero actual = tablero_inicial;
+
+        for (int gen = 1; gen <= 5; gen++)
+        {
+            actual = JuegoVida::evolucionar(actual);
+
+            // Contar células vivas
+            int vivas = 0;
+            for (int y = 0; y < actual.obtenerAlto(); y++)
+            {
+                for (int x = 0; x < actual.obtenerAncho(); x++)
+                {
+                    if (actual.obtener(x, y))
+                        vivas++;
+                }
+            }
+
+            std::cout << "Generación " << gen << ": " << vivas << " células vivas" << std::endl;
+        }
+
+        // Guardar resultado final
+        std::cout << "\n=== Guardando resultado ===" << std::endl;
+        ArchivoPBM::escribir("resultado_5_generaciones.pbm", actual);
+
+        // TODO: Cuando tengamos generador_frames
+        std::cout << "\n[NOTA] Generador de frames pendiente para crear la animación completa" << std::endl;
     }
     catch (const std::exception &e)
     {
