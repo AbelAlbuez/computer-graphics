@@ -5,14 +5,14 @@
 #include <iostream>
 #include <string>
 #include <cstdlib>
+#include <exception>
 
-
-// TODO: Incluir nuestros módulos cuando estén listos
-// #include "tablero.h"
-// #include "archivo_pbm.h"
-// #include "juego_vida.h"
-// #include "generador_frames.h"
-// #include "utilidades.h"
+// Incluir nuestros módulos
+#include "tablero.h"
+#include "archivo_pbm.h"
+// TODO: #include "juego_vida.h"
+// TODO: #include "generador_frames.h"
+// TODO: #include "utilidades.h"
 
 void mostrarAyuda(const std::string &nombre_programa)
 {
@@ -89,23 +89,51 @@ int main(int argc, char *argv[])
 
     try
     {
-        // TODO: Paso 1 - Leer archivo PBM inicial
-        std::cout << "\n1. Leyendo archivo: " << archivo_entrada << "..." << std::endl;
-        // Tablero tablero_inicial = ArchivoPBM::leer(archivo_entrada);
+        // ACTUALIZADO: Ahora podemos leer archivos PBM reales!
+        std::cout << "\n=== Leyendo archivo PBM ===" << std::endl;
 
-        // TODO: Paso 2 - Mostrar información del tablero
-        std::cout << "2. Tablero cargado (simulado)" << std::endl;
-        // std::cout << "Dimensiones: " << tablero.obtenerAncho() << "x" << tablero.obtenerAlto() << std::endl;
+        // Leer el archivo PBM
+        Tablero tablero_inicial = ArchivoPBM::leer(archivo_entrada);
 
-        // TODO: Paso 3 - Generar frames
-        std::cout << "3. Generando frames..." << std::endl;
-        // GeneradorFrames generador;
-        // generador.generar(tablero_inicial, duracion, fps);
+        // Verificar si se leyó correctamente
+        if (tablero_inicial.obtenerAncho() == 0 || tablero_inicial.obtenerAlto() == 0)
+        {
+            std::cerr << "Error: No se pudo leer el archivo PBM" << std::endl;
+            return EXIT_FAILURE;
+        }
 
-        // Mensaje final
-        std::cout << "\n=== Proceso Completado ===" << std::endl;
-        std::cout << "Para crear un video, ejecute:" << std::endl;
-        std::cout << "ffmpeg -framerate " << fps << " -i frame_%05d.pbm output.mp4" << std::endl;
+        // Mostrar información del tablero
+        std::cout << "Tablero cargado: "
+                  << tablero_inicial.obtenerAncho() << "x"
+                  << tablero_inicial.obtenerAlto() << std::endl;
+
+        // Contar células vivas
+        int celulas_vivas = 0;
+        for (int y = 0; y < tablero_inicial.obtenerAlto(); y++)
+        {
+            for (int x = 0; x < tablero_inicial.obtenerAncho(); x++)
+            {
+                if (tablero_inicial.obtener(x, y))
+                {
+                    celulas_vivas++;
+                }
+            }
+        }
+        std::cout << "Células vivas: " << celulas_vivas << std::endl;
+
+        // Si el tablero es pequeño, mostrarlo
+        if (tablero_inicial.obtenerAncho() <= 20 && tablero_inicial.obtenerAlto() <= 20)
+        {
+            std::cout << "\nVisualizando tablero inicial:" << std::endl;
+            tablero_inicial.mostrar();
+        }
+
+        // Probar escritura
+        std::cout << "\n=== Prueba de escritura ===" << std::endl;
+        ArchivoPBM::escribir("test_output.pbm", tablero_inicial);
+
+        // TODO: Cuando tengamos los otros módulos
+        std::cout << "\n[NOTA] Juego de Vida y Generador de Frames pendientes" << std::endl;
     }
     catch (const std::exception &e)
     {
