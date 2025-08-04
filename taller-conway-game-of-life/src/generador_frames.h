@@ -1,23 +1,20 @@
-#ifndef GENERADOR_FRAMES_H
-#define GENERADOR_FRAMES_H
+// =========================================================================
+// @author Ricardo Cruz
+// =========================================================================
+
+#ifndef __GENERADOR_FRAMES_H__
+#define __GENERADOR_FRAMES_H__
 
 #include <string>
-#include "Tablero.h"
+#include "tablero.h"
 #include "FrameBuffer.h"
 
 class GeneradorFrames {
 public:
-    // Constructor: recibe ancho y alto (opcional)
-    GeneradorFrames();
+    static void generarAnimacion(const Tablero& inicial, int total_frames, int fps, const std::string& carpeta_salida);
 
-    // Guarda un frame a partir del estado actual del tablero
-    void guardarFrame(const Tablero& tablero, int numeroFrame);
-
-    // Calcula cuántos frames deben generarse según duración y FPS
-    static int calcularNumeroFrames(float duracion, int fps);
-
-    // Muestra barra de progreso en consola
-    static void mostrarProgreso(int actual, int total);
+private:
+    static void guardarFrame(const Tablero& tablero, int numero_frame, const std::string& carpeta_salida);
 };
 
-#endif // GENERADOR_FRAMES_H
+#endif
