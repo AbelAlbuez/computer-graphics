@@ -1,269 +1,267 @@
 # Juego de la Vida de Conway - Generador de Animaciones
 
+Implementación del autómata celular de Conway con generación de animaciones en C++. Este proyecto permite cargar patrones desde archivos PBM y generar secuencias de frames que pueden convertirse en videos o visualizarse en un navegador web.
+
+## Tabla de Contenidos
+
+- [Descripción](#descripción)
+- [Características](#características)
+- [Estructura del Proyecto](#estructura-del-proyecto)
+- [Requisitos](#requisitos)
+- [Compilación](#compilación)
+- [Manual de Uso](#manual-de-uso)
+- [Ejemplos](#ejemplos)
+- [Visualización](#visualización)
+- [Conceptos Aprendidos](#conceptos-aprendidos)
+
 ## Descripción
 
-Este proyecto implementa un generador de animaciones para el Juego de la Vida de Conway. El programa lee una configuración inicial desde un archivo PBM y genera una secuencia de imágenes que muestran la evolución del autómata celular.
+El Juego de la Vida es un autómata celular diseñado por John Conway en 1970. Este proyecto implementa:
 
-## Instalación Rápida
+- **Carga de patrones**: Lee configuraciones iniciales desde archivos PBM
+- **Simulación**: Aplica las reglas de Conway para evolucionar el tablero
+- **Generación de frames**: Crea secuencias de imágenes PPM para animaciones
+- **Visualización web**: Genera un visualizador HTML interactivo
 
-```bash
-# Navegar al proyecto
-cd computer-graphics/taller-conway-game-of-life
-
-# Compilar
-make
-
-# Ejecutar ejemplo
-./bin/juego_vida src/ejemplo.pbm 3.0 10
-```
+### Reglas de Conway
+1. **Supervivencia**: Una célula viva con 2-3 vecinos sobrevive
+2. **Muerte por soledad**: Una célula viva con <2 vecinos muere
+3. **Muerte por sobrepoblación**: Una célula viva con >3 vecinos muere
+4. **Nacimiento**: Una célula muerta con exactamente 3 vecinos nace
 
 ## Características
 
-- Lectura de archivos PBM (Portable Bitmap) formato P1
-- Generación de secuencias de frames en formato PBM o PPM
-- Detección de patrones estáticos
-- Barra de progreso con estadísticas en tiempo real
-- Arquitectura modular y extensible
+- Lectura/escritura de archivos PBM (Portable Bitmap)
+- Generación de frames en formato PPM (color) o PBM (blanco y negro)
+- Barra de progreso visual durante la generación
+- Visualizador HTML5 interactivo con controles play/pausa
+- Integración con FrameBuffer para renderizado eficiente
+- Soporte para patrones clásicos (glider, blinker, toad, pulsar)
+
+## Estructura del Proyecto
+
+```
+taller-conway-game-of-life/
+├── bin/                      # Ejecutables compilados
+│   └── juego_vida           # Ejecutable principal
+├── ejemplos/                # Patrones de ejemplo en formato PBM
+│   ├── blinker.pbm         # Oscilador simple (período 2)
+│   ├── block.pbm           # Patrón estático 2x2
+│   ├── ejemplo.pbm         # Patrón de ejemplo
+│   ├── glider.pbm          # Nave espacial clásica
+│   ├── pulsar.pbm          # Oscilador complejo (período 3)
+│   └── toad.pbm            # Oscilador (período 2)
+├── frames/                  # Directorio de salida para frames
+├── obj/                     # Archivos objeto compilados
+├── src/                     # Código fuente
+│   ├── archivo_pbm.h/.cpp      # Manejo de archivos PBM
+│   ├── FrameBuffer.h/.cxx      # Renderizado de imágenes
+│   ├── generador_frames.h/.cpp # Generación de animaciones
+│   ├── juego_vida.h/.cpp       # Lógica del autómata celular
+│   ├── main.cpp                # Programa principal
+│   ├── tablero.h/.cpp          # Estructura del tablero
+│   └── utilidades.h/.cpp       # Funciones auxiliares
+├── videos/                  # Videos generados (opcional)
+├── Makefile                # Script de compilación
+├── visualizador.html       # Visualizador web generado
+├── Observaciones.docx      # Documentación del aprendizaje
+└── README.md               # Este archivo
+```
+
+## Requisitos
+
+### Software Necesario
+- **Compilador C++**: g++ con soporte para C++11 o superior
+- **Make**: Para compilación automatizada
+- **Navegador web moderno**: Para el visualizador HTML
+
+### Herramientas Opcionales
+- **FFmpeg**: Para convertir frames a video
+- **ImageMagick**: Para crear GIFs animados
 
 ## Compilación
 
-### Requisitos
-- Compilador C++ con soporte para C++11 (g++, clang++)
-- Make
-- Sistema operativo Linux/Unix o Windows con MinGW
-
-### Archivos Necesarios
-Asegúrate de tener todos los archivos header (`.h`) en la carpeta `src/`:
-- `tablero.h`
-- `archivo_pbm.h`
-- `juego_vida.h`
-- `generador_frames.h`
-- `utilidades.h`
-
-### Instrucciones de compilación
-
+### Clonar el Repositorio
 ```bash
-# Navegar al directorio del proyecto
+git clone https://github.com/AbelAlbuez/computer-graphics.git
 cd computer-graphics/taller-conway-game-of-life
-
-# Compilar
-make
-
-# O compilar en modo debug
-make debug
-
-# Limpiar archivos compilados y frames generados
-make clean
-
-# Limpiar solo los frames generados
-make clean-frames
 ```
 
-## Uso
+### Compilación Básica
+```bash
+make
+```
 
-### Sintaxis básica
+### Compilación Limpia
+```bash
+make clean  # Elimina archivos objeto
+make        # Recompila todo
+```
 
+### Compilación Manual (sin Make)
+```bash
+g++ -std=c++11 -o bin/juego_vida src/*.cpp src/*.cxx
+```
+
+## Manual de Uso
+
+### Sintaxis Básica
 ```bash
 ./bin/juego_vida <archivo.pbm> <duracion> <fps>
 ```
 
 ### Parámetros
+- **archivo.pbm**: Archivo con el patrón inicial (formato PBM P1)
+- **duracion**: Duración de la animación en segundos (decimal)
+- **fps**: Frames por segundo (entero)
 
-- `archivo.pbm`: Archivo PBM con la configuración inicial (formato P1)
-- `duracion`: Duración de la animación en segundos (número decimal)
-- `fps`: Cuadros por segundo (número entero)
+### Ejemplos de Uso
 
-### Ejemplos
-
+#### 1. Generar animación del Glider (5 segundos a 30 fps)
 ```bash
-# Generar 30 frames (3 segundos a 10 fps) del archivo ejemplo
-./bin/juego_vida src/ejemplo.pbm 3.0 10
+./bin/juego_vida ejemplos/glider.pbm 5.0 30
+```
+Genera 150 frames del patrón glider
 
-# Generar 150 frames (5 segundos a 30 fps) de un glider
-./bin/juego_vida src/glider.pbm 5.0 30
+#### 2. Animación corta del Blinker (2 segundos a 10 fps)
+```bash
+./bin/juego_vida ejemplos/blinker.pbm 2.0 10
+```
+Genera 20 frames mostrando la oscilación
 
-# Generar 60 frames (2 segundos a 30 fps) de un blinker
-./bin/juego_vida src/blinker.pbm 2.0 30
-
-# Ver ayuda
-./bin/juego_vida --help
+#### 3. Ver ayuda
+```bash
+./bin/juego_vida -h
 ```
 
-## Archivos de Ejemplo
+### Salida
+- Los frames se guardan en `frames/` como `frame_00000.ppm`, `frame_00001.ppm`, etc.
+- Se genera automáticamente `visualizador.html` para ver la animación
 
-Los archivos PBM de ejemplo deben guardarse en la carpeta `src/`. A continuación se muestran algunos patrones clásicos:
+## Ejemplos
 
-### 1. Glider (src/glider.pbm)
-```
-P1
-# Glider pattern
-10 10
-0 0 0 0 0 0 0 0 0 0
-0 0 1 0 0 0 0 0 0 0
-0 0 0 1 0 0 0 0 0 0
-0 1 1 1 0 0 0 0 0 0
-0 0 0 0 0 0 0 0 0 0
-0 0 0 0 0 0 0 0 0 0
-0 0 0 0 0 0 0 0 0 0
-0 0 0 0 0 0 0 0 0 0
-0 0 0 0 0 0 0 0 0 0
-0 0 0 0 0 0 0 0 0 0
-```
+### Patrones Incluidos
 
-### 2. Blinker (src/blinker.pbm)
+| Patrón | Tipo | Descripción |
+|--------|------|-------------|
+| **block.pbm** | Estático | Cuadrado 2x2 que no cambia |
+| **blinker.pbm** | Oscilador | Línea de 3 células que alterna vertical/horizontal |
+| **toad.pbm** | Oscilador | Forma de 6 células con período 2 |
+| **glider.pbm** | Nave | Se desplaza diagonalmente por el tablero |
+| **pulsar.pbm** | Oscilador | Patrón simétrico complejo con período 3 |
+
+### Formato PBM
+Los archivos PBM deben estar en formato P1 (ASCII):
 ```
 P1
-# Blinker oscillator
-5 5
-0 0 0 0 0
-0 0 1 0 0
-0 0 1 0 0
-0 0 1 0 0
-0 0 0 0 0
-```
-
-### 3. Toad (src/toad.pbm)
-```
-P1
-# Toad oscillator
+# Comentario opcional
 6 6
 0 0 0 0 0 0
-0 0 0 0 0 0
-0 0 1 1 1 0
+0 0 1 0 0 0
+0 0 0 1 0 0
 0 1 1 1 0 0
 0 0 0 0 0 0
 0 0 0 0 0 0
 ```
 
-### 4. Beacon (src/beacon.pbm)
-```
-P1
-# Beacon oscillator
-6 6
-0 0 0 0 0 0
-0 1 1 0 0 0
-0 1 0 0 0 0
-0 0 0 0 1 0
-0 0 0 1 1 0
-0 0 0 0 0 0
-```
+## Visualización
 
-## Creación de Videos
+### Visualizador Web
+Abre `visualizador.html` en tu navegador después de generar frames:
+- **Play/Pausa**: Controla la animación
+- **Reiniciar**: Vuelve al frame 0
+- **Indicador**: Muestra frame actual/total
 
-Los frames se generan en el directorio actual como `frame_00000.pbm`, `frame_00001.pbm`, etc.
-
-Una vez generados los frames, puedes crear un video usando FFmpeg:
-
+### Crear Video con FFmpeg
 ```bash
-# Crear video MP4
-ffmpeg -framerate 30 -i frame_%05d.pbm -c:v libx264 -pix_fmt yuv420p output.mp4
+# MP4 con códec H.264
+ffmpeg -framerate 30 -i frames/frame_%05d.ppm -c:v libx264 -pix_fmt yuv420p output.mp4
 
-# Crear GIF animado (usando ImageMagick)
-convert -delay 3 frame_*.pbm animation.gif
-
-# Crear video con mejor calidad
-ffmpeg -framerate 30 -i frame_%05d.pbm -c:v libx264 -crf 20 -pix_fmt yuv420p output_hq.mp4
+# AVI sin compresión
+ffmpeg -framerate 30 -i frames/frame_%05d.ppm -c:v rawvideo output.avi
 ```
 
-**Nota**: Los frames se guardan en el directorio desde donde ejecutas el programa.
+### Crear GIF con ImageMagick
+```bash
+# GIF animado
+convert -delay 10 frames/frame_*.ppm -loop 0 animation.gif
 
-## Estructura del Proyecto
-
-```
-computer-graphics/
-└── taller-conway-game-of-life/
-    ├── src/
-    │   ├── main.cpp               # Programa principal
-    │   ├── tablero.h              # Gestión del tablero
-    │   ├── tablero.cpp         
-    │   ├── archivo_pbm.h          # Lectura/escritura PBM
-    │   ├── archivo_pbm.cpp     
-    │   ├── juego_vida.h           # Lógica del juego
-    │   ├── juego_vida.cpp      
-    │   ├── generador_frames.h     # Generación de frames
-    │   ├── generador_frames.cpp
-    │   ├── utilidades.h           # Funciones auxiliares
-    │   ├── utilidades.cpp      
-    │   ├── FrameBuffer.h          # Buffer de imagen (reutilizado)
-    │   ├── FrameBuffer.cxx        # Implementación (reutilizado)
-    │   └── ejemplo.pbm            # Archivo PBM de ejemplo
-    ├── obj/                       # Archivos objeto (generado)
-    ├── bin/                       # Ejecutable (generado)
-    ├── Makefile                   # Sistema de compilación
-    └── README.md                  # Este archivo
+# GIF optimizado (más pequeño)
+convert -delay 10 frames/frame_*.ppm -loop 0 -layers Optimize animation.gif
 ```
 
-## Formato PBM
-
-El formato PBM (Portable Bitmap) es un formato de imagen simple:
-
-```
-P1                    # Número mágico (P1 = ASCII)
-# Comentario opcional
-ancho alto           # Dimensiones
-0 1 0 1 ...         # Datos (0=blanco, 1=negro)
+### Reproducir con FFplay
+```bash
+ffplay -framerate 30 -i frames/frame_%05d.ppm
 ```
 
-## Reglas del Juego de la Vida
+## Conceptos Aprendidos
 
-1. **Supervivencia**: Una célula viva con 2 o 3 vecinos vivos sobrevive
-2. **Muerte por soledad**: Una célula viva con menos de 2 vecinos muere
-3. **Muerte por sobrepoblación**: Una célula viva con más de 3 vecinos muere
-4. **Nacimiento**: Una célula muerta con exactamente 3 vecinos vivos nace
+### 1. **Autómatas Celulares**
+- Reglas locales generan comportamiento global
+- Evolución determinista pero compleja
+- Paralelismo implícito en la actualización
 
-## Características Técnicas
+### 2. **Patrones y Comportamientos**
+- **Estáticos**: Configuraciones estables (block)
+- **Osciladores**: Ciclos periódicos (blinker, toad, pulsar)
+- **Naves espaciales**: Movimiento sin propulsión (glider)
 
-- **Detección de patrones estáticos**: El programa detecta cuando el tablero deja de evolucionar
-- **Estadísticas en tiempo real**: Muestra el número de células vivas en cada frame
-- **Barra de progreso**: Indica el avance de la generación
-- **Manejo de errores**: Validación robusta de entrada y manejo de excepciones
-- **Código modular**: Fácil de extender y mantener
+### 3. **Implementación Técnica**
+- **Doble buffer**: Cálculo de nuevo estado sin modificar el actual
+- **Conteo de vecinos**: Algoritmo de las 8 direcciones
+- **Condiciones de borde**: Células fuera del tablero = muertas
 
-## Problemas Comunes
+### 4. **Diseño Modular**
+- Separación lógica (JuegoVida) de visualización (FrameBuffer)
+- Reutilización de código existente
+- Interfaces claras entre componentes
 
-### Error: "No se puede abrir el archivo"
-- Verifica que el archivo PBM existe y tiene el formato correcto
-- Asegúrate de que el archivo comience con "P1"
+### 5. **Procesamiento de Imágenes**
+- Conversión entre representaciones (bool → RGB → PPM)
+- Generación de secuencias numeradas
+- Creación de visualizadores interactivos
 
-### Error: "Dimensiones inválidas"
-- Verifica que el archivo PBM tenga dimensiones válidas (números positivos)
+## Mejoras Futuras
 
-### Se generan demasiados frames
-- Reduce la duración o los FPS
-- Considera que duracion × fps = número total de frames
-
-## Extensiones Futuras
-
-- Soporte para otros formatos de imagen
-- Detección de osciladores y períodos
-- Interfaz gráfica
-- Soporte para reglas personalizadas
-- Optimización con paralelización
-
-## Licencia
-
-Este proyecto es software libre para uso educativo.
-
-## Entregable del Taller
-
-Para entregar el taller, crea un archivo ZIP que contenga:
-
-```
-taller-conway-game-of-life.zip
-├── src/                    # Todo el código fuente
-├── Makefile               # Sistema de compilación
-├── README.md              # Este manual
-└── ejemplos/              # (Opcional) Archivos PBM de prueba
-```
-
-**Fecha límite**: Antes de la tercera sesión del curso
+- Soporte para más formatos de imagen (PNG, JPEG)
+- Patrones aleatorios y semillas
+- Zoom y desplazamiento en el visualizador
+- Detección automática de ciclos
+- Estadísticas de población por frame
+- Reglas personalizables (variantes del juego)
+- Tableros toroidales (bordes conectados)
 
 ## Autores
 
-- Abel Albuez
-- Ricardo Cruz
+**Abel Albuez**  
+**Ricardo Cruz**
 
-## Agradecimientos
+## Repositorio
 
-- John Conway por crear el Juego de la Vida
-- Comunidad de autómatas celulares
+Este proyecto está disponible en GitHub:  
+[https://github.com/AbelAlbuez/computer-graphics](https://github.com/AbelAlbuez/computer-graphics)
+
+### Contribuciones
+
+Las contribuciones son bienvenidas. Por favor:
+1. Fork el repositorio
+2. Crea una rama para tu feature (`git checkout -b feature/nueva-funcionalidad`)
+3. Commit tus cambios (`git commit -am 'Agrega nueva funcionalidad'`)
+4. Push a la rama (`git push origin feature/nueva-funcionalidad`)
+5. Crea un Pull Request
+
+### Reportar Problemas
+
+Si encuentras algún bug o tienes sugerencias, por favor abre un issue en:  
+[https://github.com/AbelAlbuez/computer-graphics/issues](https://github.com/AbelAlbuez/computer-graphics/issues)
+
+## Referencias
+
+- [Wikipedia - Conway's Game of Life](https://en.wikipedia.org/wiki/Conway%27s_Game_of_Life)
+- [LifeWiki - Catálogo de patrones](https://conwaylife.com/wiki/Main_Page)
+- [Formato PBM](http://netpbm.sourceforge.net/doc/pbm.html)
+
+---
+
+*"El Juego de la Vida demuestra que la complejidad puede emerger de reglas simples"* - John Conway
