@@ -5,7 +5,15 @@
 #define __PUJ_GL__BaseApp__h__
 
 #include <memory>
-#include <GL/glut.h>
+#include <string>
+
+#ifdef __APPLE__
+  #include <GLUT/glut.h>
+#else
+  #include <GL/glut.h>
+#endif
+
+
 
 namespace PUJ_GL
 {

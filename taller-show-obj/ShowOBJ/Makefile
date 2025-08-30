@@ -2,22 +2,23 @@
 ## @author Leonardo Florez-Valencia  florez-l@javeriana.edu.co
 ## ========================================================================
 
-all: PUJ_GL_ShowOBJ
+CXX = clang++
+SRC = ShowOBJ.cxx lib/PUJ_GL/BaseApp.cxx lib/PUJ_GL/Mesh.cxx
+CFLAGS = -std=c++17 -Wall -Wextra -Ilib -Ilib/eigen3 -DGL_SILENCE_DEPRECATION
+LDFLAGS = -framework OpenGL -framework GLUT
 
-SRCS=lib/PUJ_GL/BaseApp.cxx lib/PUJ_GL/Mesh.cxx ShowOBJ.cxx
-OBJS=$(SRCS:.cxx=.o)
+TARGET = ShowOBJ
 
-CXX=g++
-CFLAGS=-std=c++23 -Ilib -I/usr/include/eigen3
-LDFLAGS=-lGL -lGLU -lglut
+all: $(TARGET)
 
-PUJ_GL_ShowOBJ: $(OBJS)
-	$(CXX) $^ -o $@ $(LDFLAGS)
+$(TARGET): $(SRC)
+	$(CXX) $(CFLAGS) $(SRC) -o $(TARGET) $(LDFLAGS)
 
-%.o: %.cxx
-	$(CXX) $(CFLAGS) -c $^ -o $@
+SHELL := /bin/bash
 
 clean:
-	rm -rf PUJ_GL_ShowOBJ *.o lib/PUJ_GL/*.o
+	@rm -f $(TARGET)
+	@find . -name '*.o' -type f -delete
+
 
 ## eof - Makefile

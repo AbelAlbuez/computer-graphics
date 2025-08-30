@@ -5,7 +5,11 @@
 #include <PUJ_GL/Mesh.h>
 #include <fstream>
 #include <sstream>
-#include <GL/gl.h>
+#ifdef __APPLE__
+  #include <OpenGL/gl.h>
+#else
+  #include <GL/gl.h>
+#endif
 
 // -------------------------------------------------------------------------
 PUJ_GL::Mesh::
