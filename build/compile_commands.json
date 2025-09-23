@@ -1,0 +1,68 @@
+[
+{
+  "directory": "/Users/abelalbuez/Documents/Maestria /Segundo Semestre/Computacion Grafica/computer-graphics/build",
+  "command": "/usr/bin/clang++  -F/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/System/Library/Frameworks -I/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/System/Library/Frameworks/GLUT.framework/Headers -I\"/Users/abelalbuez/Documents/Maestria /Segundo Semestre/Computacion Grafica/computer-graphics/build/lib\" -I\"/Users/abelalbuez/Documents/Maestria /Segundo Semestre/Computacion Grafica/computer-graphics/taller-show-param/src/lib\" -isystem /usr/local/include/eigen3 -g -arch x86_64 -o CMakeFiles/PUJ_GL.dir/lib/PUJ_GL/BaseApp.cxx.o -c \"/Users/abelalbuez/Documents/Maestria /Segundo Semestre/Computacion Grafica/computer-graphics/taller-show-param/src/lib/PUJ_GL/BaseApp.cxx\"",
+  "file": "/Users/abelalbuez/Documents/Maestria /Segundo Semestre/Computacion Grafica/computer-graphics/taller-show-param/src/lib/PUJ_GL/BaseApp.cxx",
+  "output": "CMakeFiles/PUJ_GL.dir/lib/PUJ_GL/BaseApp.cxx.o"
+},
+{
+  "directory": "/Users/abelalbuez/Documents/Maestria /Segundo Semestre/Computacion Grafica/computer-graphics/build",
+  "command": "/usr/bin/clang++  -F/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/System/Library/Frameworks -I/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/System/Library/Frameworks/GLUT.framework/Headers -I\"/Users/abelalbuez/Documents/Maestria /Segundo Semestre/Computacion Grafica/computer-graphics/build/lib\" -I\"/Users/abelalbuez/Documents/Maestria /Segundo Semestre/Computacion Grafica/computer-graphics/taller-show-param/src/lib\" -isystem /usr/local/include/eigen3 -g -arch x86_64 -o CMakeFiles/PUJ_GL.dir/lib/PUJ_GL/Image.cxx.o -c \"/Users/abelalbuez/Documents/Maestria /Segundo Semestre/Computacion Grafica/computer-graphics/taller-show-param/src/lib/PUJ_GL/Image.cxx\"",
+  "file": "/Users/abelalbuez/Documents/Maestria /Segundo Semestre/Computacion Grafica/computer-graphics/taller-show-param/src/lib/PUJ_GL/Image.cxx",
+  "output": "CMakeFiles/PUJ_GL.dir/lib/PUJ_GL/Image.cxx.o"
+},
+{
+  "directory": "/Users/abelalbuez/Documents/Maestria /Segundo Semestre/Computacion Grafica/computer-graphics/build",
+  "command": "/usr/bin/clang++  -F/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/System/Library/Frameworks -I/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/System/Library/Frameworks/GLUT.framework/Headers -I\"/Users/abelalbuez/Documents/Maestria /Segundo Semestre/Computacion Grafica/computer-graphics/build/lib\" -I\"/Users/abelalbuez/Documents/Maestria /Segundo Semestre/Computacion Grafica/computer-graphics/taller-show-param/src/lib\" -isystem /usr/local/include/eigen3 -g -arch x86_64 -o CMakeFiles/PUJ_GL.dir/lib/PUJ_GL/Mesh.cxx.o -c \"/Users/abelalbuez/Documents/Maestria /Segundo Semestre/Computacion Grafica/computer-graphics/taller-show-param/src/lib/PUJ_GL/Mesh.cxx\"",
+  "file": "/Users/abelalbuez/Documents/Maestria /Segundo Semestre/Computacion Grafica/computer-graphics/taller-show-param/src/lib/PUJ_GL/Mesh.cxx",
+  "output": "CMakeFiles/PUJ_GL.dir/lib/PUJ_GL/Mesh.cxx.o"
+},
+{
+  "directory": "/Users/abelalbuez/Documents/Maestria /Segundo Semestre/Computacion Grafica/computer-graphics/build",
+  "command": "/usr/bin/clang++  -F/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/System/Library/Frameworks -I/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/System/Library/Frameworks/GLUT.framework/Headers -I\"/Users/abelalbuez/Documents/Maestria /Segundo Semestre/Computacion Grafica/computer-graphics/build/lib\" -I\"/Users/abelalbuez/Documents/Maestria /Segundo Semestre/Computacion Grafica/computer-graphics/taller-show-param/src/lib\" -isystem /usr/local/include/eigen3 -g -arch x86_64 -o CMakeFiles/PUJ_GL.dir/lib/PUJ_GL/MeshObject.cxx.o -c \"/Users/abelalbuez/Documents/Maestria /Segundo Semestre/Computacion Grafica/computer-graphics/taller-show-param/src/lib/PUJ_GL/MeshObject.cxx\"",
+  "file": "/Users/abelalbuez/Documents/Maestria /Segundo Semestre/Computacion Grafica/computer-graphics/taller-show-param/src/lib/PUJ_GL/MeshObject.cxx",
+  "output": "CMakeFiles/PUJ_GL.dir/lib/PUJ_GL/MeshObject.cxx.o"
+},
+{
+  "directory": "/Users/abelalbuez/Documents/Maestria /Segundo Semestre/Computacion Grafica/computer-graphics/build",
+  "command": "/usr/bin/clang++  -F/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/System/Library/Frameworks -I/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/System/Library/Frameworks/GLUT.framework/Headers -I\"/Users/abelalbuez/Documents/Maestria /Segundo Semestre/Computacion Grafica/computer-graphics/build/lib\" -I\"/Users/abelalbuez/Documents/Maestria /Segundo Semestre/Computacion Grafica/computer-graphics/taller-show-param/src/lib\" -isystem /usr/local/include/eigen3 -g -arch x86_64 -o CMakeFiles/PUJ_GL.dir/lib/PUJ_GL/Object.cxx.o -c \"/Users/abelalbuez/Documents/Maestria /Segundo Semestre/Computacion Grafica/computer-graphics/taller-show-param/src/lib/PUJ_GL/Object.cxx\"",
+  "file": "/Users/abelalbuez/Documents/Maestria /Segundo Semestre/Computacion Grafica/computer-graphics/taller-show-param/src/lib/PUJ_GL/Object.cxx",
+  "output": "CMakeFiles/PUJ_GL.dir/lib/PUJ_GL/Object.cxx.o"
+},
+{
+  "directory": "/Users/abelalbuez/Documents/Maestria /Segundo Semestre/Computacion Grafica/computer-graphics/build",
+  "command": "/usr/bin/clang++  -F/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/System/Library/Frameworks -I/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/System/Library/Frameworks/GLUT.framework/Headers -I\"/Users/abelalbuez/Documents/Maestria /Segundo Semestre/Computacion Grafica/computer-graphics/build/lib\" -I\"/Users/abelalbuez/Documents/Maestria /Segundo Semestre/Computacion Grafica/computer-graphics/taller-show-param/src/lib\" -isystem /usr/local/include/eigen3 -g -arch x86_64 -o CMakeFiles/PUJ_GL.dir/lib/PUJ_GL/OrthoBase.cxx.o -c \"/Users/abelalbuez/Documents/Maestria /Segundo Semestre/Computacion Grafica/computer-graphics/taller-show-param/src/lib/PUJ_GL/OrthoBase.cxx\"",
+  "file": "/Users/abelalbuez/Documents/Maestria /Segundo Semestre/Computacion Grafica/computer-graphics/taller-show-param/src/lib/PUJ_GL/OrthoBase.cxx",
+  "output": "CMakeFiles/PUJ_GL.dir/lib/PUJ_GL/OrthoBase.cxx.o"
+},
+{
+  "directory": "/Users/abelalbuez/Documents/Maestria /Segundo Semestre/Computacion Grafica/computer-graphics/build",
+  "command": "/usr/bin/clang++  -F/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/System/Library/Frameworks -I/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/System/Library/Frameworks/GLUT.framework/Headers -I\"/Users/abelalbuez/Documents/Maestria /Segundo Semestre/Computacion Grafica/computer-graphics/build/lib\" -I\"/Users/abelalbuez/Documents/Maestria /Segundo Semestre/Computacion Grafica/computer-graphics/taller-show-param/src/lib\" -isystem /usr/local/include/eigen3 -g -arch x86_64 -o CMakeFiles/PUJ_GL.dir/lib/PUJ_GL/ParametricModel.cxx.o -c \"/Users/abelalbuez/Documents/Maestria /Segundo Semestre/Computacion Grafica/computer-graphics/taller-show-param/src/lib/PUJ_GL/ParametricModel.cxx\"",
+  "file": "/Users/abelalbuez/Documents/Maestria /Segundo Semestre/Computacion Grafica/computer-graphics/taller-show-param/src/lib/PUJ_GL/ParametricModel.cxx",
+  "output": "CMakeFiles/PUJ_GL.dir/lib/PUJ_GL/ParametricModel.cxx.o"
+},
+{
+  "directory": "/Users/abelalbuez/Documents/Maestria /Segundo Semestre/Computacion Grafica/computer-graphics/build",
+  "command": "/usr/bin/clang++  -F/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/System/Library/Frameworks -I/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/System/Library/Frameworks/GLUT.framework/Headers -I\"/Users/abelalbuez/Documents/Maestria /Segundo Semestre/Computacion Grafica/computer-graphics/build/lib\" -I\"/Users/abelalbuez/Documents/Maestria /Segundo Semestre/Computacion Grafica/computer-graphics/taller-show-param/src/lib\" -isystem /usr/local/include/eigen3 -g -arch x86_64 -o CMakeFiles/PUJ_GL.dir/lib/PUJ_GL/Scene.cxx.o -c \"/Users/abelalbuez/Documents/Maestria /Segundo Semestre/Computacion Grafica/computer-graphics/taller-show-param/src/lib/PUJ_GL/Scene.cxx\"",
+  "file": "/Users/abelalbuez/Documents/Maestria /Segundo Semestre/Computacion Grafica/computer-graphics/taller-show-param/src/lib/PUJ_GL/Scene.cxx",
+  "output": "CMakeFiles/PUJ_GL.dir/lib/PUJ_GL/Scene.cxx.o"
+},
+{
+  "directory": "/Users/abelalbuez/Documents/Maestria /Segundo Semestre/Computacion Grafica/computer-graphics/build",
+  "command": "/usr/bin/clang++  -F/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/System/Library/Frameworks -I/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/System/Library/Frameworks/GLUT.framework/Headers -I\"/Users/abelalbuez/Documents/Maestria /Segundo Semestre/Computacion Grafica/computer-graphics/build/lib\" -I\"/Users/abelalbuez/Documents/Maestria /Segundo Semestre/Computacion Grafica/computer-graphics/taller-show-param/src/lib\" -isystem /usr/local/include/eigen3 -g -arch x86_64 -o CMakeFiles/PUJ_GL.dir/lib/PUJ_GL/TrackballCamera.cxx.o -c \"/Users/abelalbuez/Documents/Maestria /Segundo Semestre/Computacion Grafica/computer-graphics/taller-show-param/src/lib/PUJ_GL/TrackballCamera.cxx\"",
+  "file": "/Users/abelalbuez/Documents/Maestria /Segundo Semestre/Computacion Grafica/computer-graphics/taller-show-param/src/lib/PUJ_GL/TrackballCamera.cxx",
+  "output": "CMakeFiles/PUJ_GL.dir/lib/PUJ_GL/TrackballCamera.cxx.o"
+},
+{
+  "directory": "/Users/abelalbuez/Documents/Maestria /Segundo Semestre/Computacion Grafica/computer-graphics/build",
+  "command": "/usr/bin/clang++  -F/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/System/Library/Frameworks -I/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/System/Library/Frameworks/GLUT.framework/Headers -I\"/Users/abelalbuez/Documents/Maestria /Segundo Semestre/Computacion Grafica/computer-graphics/build/lib\" -I\"/Users/abelalbuez/Documents/Maestria /Segundo Semestre/Computacion Grafica/computer-graphics/taller-show-param/src/lib\" -isystem /usr/local/include/eigen3 -g -arch x86_64 -o CMakeFiles/PUJ_GL_ShowParametricModel.dir/main.cxx.o -c \"/Users/abelalbuez/Documents/Maestria /Segundo Semestre/Computacion Grafica/computer-graphics/taller-show-param/src/main.cxx\"",
+  "file": "/Users/abelalbuez/Documents/Maestria /Segundo Semestre/Computacion Grafica/computer-graphics/taller-show-param/src/main.cxx",
+  "output": "CMakeFiles/PUJ_GL_ShowParametricModel.dir/main.cxx.o"
+},
+{
+  "directory": "/Users/abelalbuez/Documents/Maestria /Segundo Semestre/Computacion Grafica/computer-graphics/build",
+  "command": "/usr/bin/clang++  -F/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/System/Library/Frameworks -I/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/System/Library/Frameworks/GLUT.framework/Headers -I\"/Users/abelalbuez/Documents/Maestria /Segundo Semestre/Computacion Grafica/computer-graphics/build/lib\" -I\"/Users/abelalbuez/Documents/Maestria /Segundo Semestre/Computacion Grafica/computer-graphics/taller-show-param/src/lib\" -isystem /usr/local/include/eigen3 -g -arch x86_64 -o CMakeFiles/PUJ_GL_ShowParametricModel.dir/App.cxx.o -c \"/Users/abelalbuez/Documents/Maestria /Segundo Semestre/Computacion Grafica/computer-graphics/taller-show-param/src/App.cxx\"",
+  "file": "/Users/abelalbuez/Documents/Maestria /Segundo Semestre/Computacion Grafica/computer-graphics/taller-show-param/src/App.cxx",
+  "output": "CMakeFiles/PUJ_GL_ShowParametricModel.dir/App.cxx.o"
+}
+]

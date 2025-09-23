@@ -1,0 +1,4 @@
+/Users/abelalbuez/Documents/Maestria /Segundo Semestre/Computacion Grafica/computer-graphics/taller-show-param/src/build/CMakeFiles/PUJ_GL.dir
+/Users/abelalbuez/Documents/Maestria /Segundo Semestre/Computacion Grafica/computer-graphics/taller-show-param/src/build/CMakeFiles/PUJ_GL_ShowParametricModel.dir
+/Users/abelalbuez/Documents/Maestria /Segundo Semestre/Computacion Grafica/computer-graphics/taller-show-param/src/build/CMakeFiles/edit_cache.dir
+/Users/abelalbuez/Documents/Maestria /Segundo Semestre/Computacion Grafica/computer-graphics/taller-show-param/src/build/CMakeFiles/rebuild_cache.dir

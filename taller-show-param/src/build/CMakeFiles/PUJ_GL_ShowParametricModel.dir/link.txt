@@ -1,0 +1,1 @@
+/usr/bin/c++ -O3 -DNDEBUG -arch x86_64 -Wl,-search_paths_first -Wl,-headerpad_max_install_names CMakeFiles/PUJ_GL_ShowParametricModel.dir/main.cxx.o CMakeFiles/PUJ_GL_ShowParametricModel.dir/App.cxx.o -o PUJ_GL_ShowParametricModel  libPUJ_GL.a -framework OpenGL -framework GLUT

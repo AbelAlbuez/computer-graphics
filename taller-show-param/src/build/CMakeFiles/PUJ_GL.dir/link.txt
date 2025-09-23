@@ -1,0 +1,2 @@
+/usr/bin/ar qc libPUJ_GL.a CMakeFiles/PUJ_GL.dir/lib/PUJ_GL/BaseApp.cxx.o CMakeFiles/PUJ_GL.dir/lib/PUJ_GL/Image.cxx.o CMakeFiles/PUJ_GL.dir/lib/PUJ_GL/Mesh.cxx.o CMakeFiles/PUJ_GL.dir/lib/PUJ_GL/MeshObject.cxx.o CMakeFiles/PUJ_GL.dir/lib/PUJ_GL/Object.cxx.o CMakeFiles/PUJ_GL.dir/lib/PUJ_GL/OrthoBase.cxx.o CMakeFiles/PUJ_GL.dir/lib/PUJ_GL/ParametricModel.cxx.o CMakeFiles/PUJ_GL.dir/lib/PUJ_GL/Scene.cxx.o CMakeFiles/PUJ_GL.dir/lib/PUJ_GL/TrackballCamera.cxx.o
+/usr/bin/ranlib libPUJ_GL.a
