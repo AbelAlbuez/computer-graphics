@@ -23,6 +23,25 @@ frame_*.ppm
 *.avi
 EOF
 
-# Agregar .gitignore al commit
-git add .gitignore
-git commit -m "chore: add .gitignore for build artifacts and generated frames"
+# Ignorar cualquier carpeta llamada build en cualquier nivel
+**/build/
+
+# Archivos de compilación
+*.o
+*.obj
+*.exe
+*.out
+*.dll
+*.so
+*.dylib
+
+# Archivos de dependencias
+*.a
+*.lib
+
+# Archivos temporales
+*.log
+*.tmp
+*.swp
+
+**/.DS_Store
