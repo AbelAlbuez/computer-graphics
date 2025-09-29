@@ -36,7 +36,17 @@ protected:
   virtual void _cb_keyboard( unsigned char key, int x, int y ) override;
 
 protected:
+  void drawBumpMappedPlane(int gridSize, float planeSize, float bumpStrength);
+  float sampleImageSmooth(float u, float v);
+  float m_bumpStrength = 3.0f;
+  int m_gridSize = 100;
+  bool m_useSmoothing = true;
+  float m_lightAngle = 0.0f;
+  
+
+protected:
   PUJ_GL::TrackballCamera m_Camera;
+  PUJ_GL::Image* m_Image = nullptr;
 };
 
 #endif // __App__h__
