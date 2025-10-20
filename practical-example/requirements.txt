@@ -1,0 +1,14 @@
+# requirements.txt
+
+# --- Gráficos y visualización ---
+vtk==9.3.0              # Visualization Toolkit (3D rendering, marching cubes, etc.)
+PyOpenGL==3.1.7         # Binding de OpenGL para Python
+
+# --- Herramientas científicas y numéricas ---
+numpy>=1.26.0           # Soporte para operaciones vectoriales y matrices
+scipy>=1.13.0           # Cálculos numéricos avanzados (útil para volumen de datos)
+matplotlib>=3.9.0       # Visualización 2D complementaria (plots, debugging visual)
+
+# --- Opcional (útil si trabajas con datos volumétricos o imágenes médicas) ---
+imageio>=2.35.0         # Lectura/escritura de imágenes (PNG, TIFF, DICOM, etc.)
+scikit-image>=0.24.0    # Procesamiento de imágenes (segmentación, filtros)

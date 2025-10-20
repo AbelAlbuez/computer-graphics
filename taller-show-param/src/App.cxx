@@ -59,7 +59,7 @@ App(
 
   this->m_Scene.load_parametric_model(
     parametric_model,
-    0.5, -0.5, 170, false, 0.5, -0.5, 170, false,
+    0.5, -0.5, 500, false, 0.5, -0.5, 500, false,
     image
     );
 

@@ -1,0 +1,13 @@
+material Carro_Natalia
+{
+  technique
+  {
+    pass
+    {
+      texture_unit 
+      {
+        texture unwrap_nata_carro.dds
+      }
+    }
+  }
+}
