@@ -72,6 +72,16 @@ class BaseApplication( OgreBites.ApplicationContext ):
     # end if
     return True
   # end def
+  
+  def frameRenderingQueued( self, evt ):
+    r = super( BaseApplication, self ).frameRenderingQueued( evt )
+    self._correctCamera( )
+    return r
+  # end def
+
+  def _correctCamera( self ):
+    pass
+  # end def
 
   '''
   '''
