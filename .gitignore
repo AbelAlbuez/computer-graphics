@@ -1,47 +1,33 @@
-cat > .gitignore << 'EOF'
-# Archivos compilados
-*.o
-*.out
-*.exe
+# Virtual Environment
+venv/
+env/
+ENV/
+.venv/
 
-# Directorios de compilación
-obj/
-bin/
-
-# Frames generados
-frame_*.pbm
-frame_*.ppm
-
-# Archivos temporales
-*.tmp
-*~
-.*.swp
-
-# Videos generados
-*.mp4
-*.gif
-*.avi
-EOF
-
-# Ignorar cualquier carpeta llamada build en cualquier nivel
-**/build/
-
-# Archivos de compilación
-*.o
-*.obj
-*.exe
-*.out
-*.dll
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
 *.so
-*.dylib
+*.egg
+*.egg-info/
+dist/
+build/
+*.pyc
 
-# Archivos de dependencias
-*.a
-*.lib
-
-# Archivos temporales
-*.log
-*.tmp
+# IDE
+.vscode/
+.idea/
 *.swp
+*.swo
+*~
 
-**/.DS_Store
+# OS
+.DS_Store
+Thumbs.db
+
+# Ogre cache
+.cache/
+
+# Logs
+*.log

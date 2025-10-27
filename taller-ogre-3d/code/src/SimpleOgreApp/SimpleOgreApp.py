@@ -63,7 +63,9 @@ class SimpleOgreApp( PUJ_Ogre.BaseApplication ):
     # Light
     light = self.m_SceneMgr.createLight( 'MainLight' )
     light.setType( Ogre.Light.LT_DIRECTIONAL )
-    light.setDirection( [ -0.5, -1, -0.5 ] )
+    lightNode = root_node.createChildSceneNode()
+    lightNode.setDirection( [ -0.5, -1, -0.5 ] )
+    lightNode.attachObject( light )
 
     # Load a mesh
     ent = self.m_SceneMgr.createEntity( 'Sinbad', 'Sinbad.mesh' )
