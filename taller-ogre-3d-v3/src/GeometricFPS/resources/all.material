@@ -1,0 +1,28 @@
+material ground
+{
+  technique
+  {
+    pass
+    {
+      texture_unit 
+      {
+        texture ground.jpg
+      }
+    }
+  }
+}
+
+material bad_guy1
+{
+  technique
+  {
+    pass
+    {
+      texture_unit 
+      {
+        texture ball.jpg
+      }
+    }
+  }
+}
+

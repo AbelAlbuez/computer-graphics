@@ -1,0 +1,13 @@
+# Core dependencies for Ogre 3D project with VTK integration
+ogre-python==14.4.1
+vtk>=9.0.0
+
+# Python development tools
+pylint
+black
+autopep8
+
+# Additional useful packages
+numpy
+setuptools
+wheel

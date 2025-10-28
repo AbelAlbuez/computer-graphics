@@ -1,0 +1,5 @@
+ground -200 200 -200 200
+camera 1e-3 1.7 1.0
+skycolor 0.7 0.5 0.9
+sphere 1.0 bad_guy1 15 0.07 3
+cylinder 0.3 0.5 bad_guy1 10 0.03 30
