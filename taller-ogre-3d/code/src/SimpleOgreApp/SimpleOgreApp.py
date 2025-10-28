@@ -81,10 +81,10 @@ class SimpleOgreApp(PUJ_Ogre.BaseApplication):
     node.attachObject(ent)
 
     print("=" * 60)
-    print("TALLER 4 - ENEMIGOS CILINDROS")
+    print("TALLER 4 - ENEMIGOS ESFERAS")
     print("=" * 60)
     print("CONTROLES: WASD + Mouse | ESC para salir")
-    print("Cilindros aparecen cada 2s y te persiguen")
+    print("Esferas enemigas aparecen cada 2s y te persiguen")
     print("=" * 60)
   # end def
 
@@ -136,20 +136,19 @@ class SimpleOgreApp(PUJ_Ogre.BaseApplication):
       z = random.uniform(-half + margin, half - margin)
     # end if
     
-    # Crear cilindro
+    # Crear ESFERA (en lugar de cilindro)
     root_node = self.m_SceneMgr.getRootSceneNode()
-    cylinder = GeometryFactory.create_cylinder(
+    sphere = GeometryFactory.create_sphere(
         self.m_SceneMgr,
         f"enemy_{self.m_EnemyCounter}",
-        1.0,  # radio
-        3.0,  # altura
+        1.5,  # radio de la esfera
         "pelota"
     )
     
     # Crear nodo
     node = root_node.createChildSceneNode()
-    node.attachObject(cylinder)
-    node.setPosition([x, 1.5, z])  # 1.5 para que se vea bien
+    node.attachObject(sphere)
+    node.setPosition([x, 1.5, z])  # 1.5 para que se vea a altura media
     
     # Guardar info del enemigo
     enemy = {
