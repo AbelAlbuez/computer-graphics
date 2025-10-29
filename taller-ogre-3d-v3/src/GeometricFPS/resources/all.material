@@ -6,7 +6,7 @@ material projectile
     {
       ambient 1.0 1.0 0.2
       diffuse 1.0 1.0 0.3
-      emissive 0.3 0.3 0.0
+      emissive 0.5 0.5 0.1
       
       texture_unit 
       {
@@ -22,6 +22,9 @@ material ground
   {
     pass
     {
+      ambient 0.5 0.5 0.5
+      diffuse 0.8 0.8 0.8
+      
       texture_unit 
       {
         texture ground.jpg
@@ -36,6 +39,9 @@ material bad_guy1
   {
     pass
     {
+      ambient 0.8 0.2 0.2
+      diffuse 1.0 0.3 0.3
+      
       texture_unit 
       {
         texture ball.jpg
@@ -44,3 +50,19 @@ material bad_guy1
   }
 }
 
+material bad_guy2
+{
+  technique
+  {
+    pass
+    {
+      ambient 0.2 0.2 0.8
+      diffuse 0.3 0.3 1.0
+      
+      texture_unit 
+      {
+        texture ball.jpg
+      }
+    }
+  }
+}
