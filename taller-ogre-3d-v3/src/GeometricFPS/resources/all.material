@@ -1,3 +1,21 @@
+material projectile
+{
+  technique
+  {
+    pass
+    {
+      ambient 1.0 1.0 0.2
+      diffuse 1.0 1.0 0.3
+      emissive 0.3 0.3 0.0
+      
+      texture_unit 
+      {
+        texture ball.jpg
+      }
+    }
+  }
+}
+
 material ground
 {
   technique
