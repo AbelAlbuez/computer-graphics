@@ -50,7 +50,9 @@ class MovingSpheres( PUJ_Ogre.BaseApplicationWithVTK ):
     # Light
     light = self.m_SceneMgr.createLight( 'MainLight' )
     light.setType( Ogre.Light.LT_DIRECTIONAL )
-    light.setDirection( [ 0, -1, 0 ] )
+    lightNode = root_node.createChildSceneNode( )
+    lightNode.setDirection( [ 0, -1, 0 ] )
+    lightNode.attachObject( light )
 
     # A ground
     self._ground( 'ground', [ -2.00, 2.00, -2.00, 2.00 ] )
