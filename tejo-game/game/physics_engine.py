@@ -7,61 +7,109 @@ class PhysicsEngine:
         self.tejo_bodies = {}
         self.mecha_bodies = []
         self.board_body = None
+        self.ground_body = None
         self.initialized = False
-    
+
     def initialize(self):
         if not self.initialized:
             pybullet.connect(pybullet.DIRECT)
             pybullet.setGravity(0, GRAVITY, 0)
             pybullet.setPhysicsEngineParameter(numSolverIterations=10)
             self.initialized = True
-    
+            self.create_ground()
+
+    def create_ground(self):
+        """Crea un plano de suelo para que las esferas reboten"""
+        ground_shape = pybullet.createCollisionShape(
+            pybullet.GEOM_PLANE,
+            planeNormal=[0, 1, 0]
+        )
+
+        self.ground_body = pybullet.createMultiBody(
+            baseMass=0,
+            baseCollisionShapeIndex=ground_shape,
+            basePosition=[0, 0, 0]
+        )
+
+        pybullet.changeDynamics(
+            self.ground_body,
+            -1,
+            restitution=GROUND_RESTITUTION,
+            lateralFriction=GROUND_FRICTION
+        )
+
+        return self.ground_body
+
     def create_board(self):
+        """Crea el tablero inclinado con colisiones"""
         half_extents = [BOARD_LENGTH/2, 0.05, BOARD_WIDTH/2]
-        
+
         board_shape = pybullet.createCollisionShape(
             pybullet.GEOM_BOX,
             halfExtents=half_extents
         )
-        
+
         angle_rad = math.radians(BOARD_ANGLE)
+        # Rotación alrededor del eje Z para inclinar el tablero
         orientation = pybullet.getQuaternionFromEuler([0, 0, angle_rad])
-        
+
+        # Posición del centro del tablero inclinado
         board_center_height = (BOARD_LENGTH/2) * math.sin(angle_rad)
-        position = [0, board_center_height, 0]
-        
+        board_center_x = (BOARD_LENGTH/2) * math.cos(angle_rad)
+        position = [board_center_x, board_center_height, 0]
+
         self.board_body = pybullet.createMultiBody(
             baseMass=0,
             baseCollisionShapeIndex=board_shape,
             basePosition=position,
             baseOrientation=orientation
         )
-        
+
         pybullet.changeDynamics(
             self.board_body,
             -1,
-            restitution=0.1,
+            restitution=0.05,
             lateralFriction=BOARD_FRICTION,
-            spinningFriction=0.5,
-            rollingFriction=0.3
+            spinningFriction=10.0,
+            rollingFriction=10.0
         )
-        
+
         return self.board_body
     
     def create_tejo(self, name, position):
+        # Crear forma de cono truncado usando una malla convexa
+        # El tejo real es como la base de un cono
+        vertices = []
+        num_vertices = 16  # Número de vértices en el círculo
+
+        # Vértices de la base (círculo inferior)
+        for i in range(num_vertices):
+            angle = 2 * math.pi * i / num_vertices
+            x = TEJO_RADIUS * math.cos(angle)
+            z = TEJO_RADIUS * math.sin(angle)
+            vertices.append([x, 0, z])
+
+        # Vértices de la parte superior (círculo más pequeño)
+        top_radius = TEJO_RADIUS * 0.3  # Radio superior más pequeño
+        for i in range(num_vertices):
+            angle = 2 * math.pi * i / num_vertices
+            x = top_radius * math.cos(angle)
+            z = top_radius * math.sin(angle)
+            vertices.append([x, TEJO_HEIGHT, z])
+
         tejo_shape = pybullet.createCollisionShape(
-            pybullet.GEOM_CYLINDER,
-            radius=TEJO_RADIUS,
-            height=TEJO_HEIGHT
+            pybullet.GEOM_MESH,
+            vertices=vertices,
+            meshScale=[1, 1, 1]
         )
-        
+
         tejo_body = pybullet.createMultiBody(
             baseMass=TEJO_MASS,
             baseCollisionShapeIndex=tejo_shape,
             basePosition=position,
             baseOrientation=[0, 0, 0, 1]
         )
-        
+
         pybullet.changeDynamics(
             tejo_body,
             -1,
@@ -70,7 +118,7 @@ class PhysicsEngine:
             spinningFriction=0.3,
             rollingFriction=0.2
         )
-        
+
         self.tejo_bodies[name] = tejo_body
         return tejo_body
     
