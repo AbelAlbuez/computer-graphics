@@ -112,10 +112,21 @@ class TejoGame(PUJ_Ogre.BaseApplicationWithVTK):
         
         root_node = self.m_SceneMgr.getRootSceneNode()
         
+        angle_rad = math.radians(BOARD_ANGLE)
+        board_center_height = (BOARD_LENGTH/2) * math.sin(angle_rad)
+        board_center_x = (BOARD_LENGTH/2) * math.cos(angle_rad)
+        camera_distance = 15.0
+        camera_height = 1.5  # Altura de la cámara a nivel de los ojos
+        camera_position = [
+            board_center_x - camera_distance,
+            camera_height,
+            0.0
+        ]
+
         self._createCamera(
             top_speed=3,
-            position=[-2.5, 1.5, 6.0],
-            look_at=[1.5, 0.8, 0],
+            position=camera_position,
+            look_at=[board_center_x, camera_height, 0],  # Mismo nivel Y
             background=[0.53, 0.81, 0.98],
             cam_style=OgreBites.CS_MANUAL
         )
@@ -131,8 +142,8 @@ class TejoGame(PUJ_Ogre.BaseApplicationWithVTK):
         
         self.physics.create_board()
         
-        ground_limits = [-3.0, 6.0, -2.0, 2.0]
-        ground_node = self._ground('terrain', ground_limits)
+        ground_limits = [-50.0, 50.0, -50.0, 50.0]
+        ground_node = self._ground('ground', ground_limits)
         ground_node.setPosition([0, -0.05, 0])
         
         self._create_board_visual()
@@ -156,7 +167,7 @@ class TejoGame(PUJ_Ogre.BaseApplicationWithVTK):
             20, 20, True, 1, 5, 5, [0, 0, 1]
         )
         e = self.m_SceneMgr.createEntity('board_entity', 'board_mesh')
-        e.setMaterialName('wood')
+        e.setMaterialName('arcilla_material')
         self.board_node = self.m_SceneMgr.getRootSceneNode().createChildSceneNode()
         self.board_node.attachObject(e)
         
@@ -213,8 +224,10 @@ class TejoGame(PUJ_Ogre.BaseApplicationWithVTK):
         
         self.current_tejo_name = f"tejo_{team_name}_{tejo_number}"
 
-        # Posición inicial más alta para ver las colisiones
-        start_position = [1.5, 3.0, 0.0]
+        angle_rad = math.radians(BOARD_ANGLE)
+        board_center_x = (BOARD_LENGTH / 2) * math.cos(angle_rad)
+        board_start_x = board_center_x - (BOARD_LENGTH / 2) * math.cos(angle_rad)
+        start_position = [board_start_x - 15, TEJO_HEIGHT * 0.5, 0.0]
 
         self.physics.create_tejo(self.current_tejo_name, start_position)
 
@@ -223,7 +236,7 @@ class TejoGame(PUJ_Ogre.BaseApplicationWithVTK):
         tejo_visual_height = TEJO_HEIGHT * 3.0
         tejo_data = self._cone(tejo_visual_radius, tejo_visual_height, 30, top_radius=tejo_visual_radius * 0.3)
 
-        material = 'red_material' if current_team == 0 else 'green_material'
+        material = 'metal_material'
 
         tejo_node = self._createManualObject(
             tejo_data,
@@ -326,6 +339,10 @@ class TejoGame(PUJ_Ogre.BaseApplicationWithVTK):
                 Ogre.Quaternion(orn[3], orn[0], orn[1], orn[2])
             )
         # end for
+
+        if self.auto_launch and self.tejo_ready and not self.waiting_for_stop:
+            self._ejecutar_lanzamiento(power=85, angle=45)
+        # end if
         
         if self.waiting_for_stop and self.current_tejo_name:
             if self.physics.is_tejo_stopped(self.current_tejo_name):

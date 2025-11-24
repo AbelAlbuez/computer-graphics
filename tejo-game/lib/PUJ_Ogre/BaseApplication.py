@@ -152,7 +152,14 @@ class BaseApplication( OgreBites.ApplicationContext ):
     camnode = root_node.createChildSceneNode( )
     camnode.setPosition( position )
 
-    camnode.lookAt( look_at, cam_type )
+    # Calcular dirección horizontal hacia el objetivo (sin componente Y)
+    direction = [ look_at[0] - position[0], 0, look_at[2] - position[2] ]
+    # Normalizar
+    length = ( direction[0]**2 + direction[2]**2 )**0.5
+    if length > 0:
+      direction = [ direction[0]/length, 0, direction[2]/length ]
+    # end if
+    camnode.setDirection( direction, Ogre.Node.TS_WORLD )
     camnode.attachObject( cam )
 
     self.m_CamMan = OgreBites.CameraMan( camnode )

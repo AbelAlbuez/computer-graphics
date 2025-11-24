@@ -157,10 +157,11 @@ class PhysicsEngine:
         vy = velocity_magnitude * math.sin(angle_rad)
         vz = 0
         
+        spin_speed = (force / 100.0) * TEJO_SPIN_FACTOR
         pybullet.resetBaseVelocity(
             tejo_body,
             linearVelocity=[vx, vy, vz],
-            angularVelocity=[0, 0, 0]
+            angularVelocity=[0, 0, spin_speed]
         )
     
     def step_simulation(self, delta_time):
