@@ -4,6 +4,7 @@ imp_dir = os.path.abspath(os.path.join(cur_dir, './lib'))
 sys.path.append(imp_dir)
 import pybullet, Ogre, PUJ_Ogre
 import Ogre.Bites as OgreBites
+import pygame.mixer
 
 import game
 from game.physics_engine import PhysicsEngine
@@ -33,6 +34,8 @@ class TejoInputListener(OgreBites.InputListener):
         elif evt.keysym.sym == 32:  # SPACE
             if self.game.tejo_ready:
                 self.game._ejecutar_lanzamiento(self.game.launch_power, self.game.launch_angle)
+        elif evt.keysym.sym == 114:  # R
+            self.game._reiniciar_juego()
         elif evt.keysym.sym == OgreBites.SDLK_ESCAPE:
             self.game.getRoot().queueEndRendering()
         
@@ -51,6 +54,8 @@ class TejoGame(PUJ_Ogre.BaseApplicationWithVTK):
         self.tejo_nodes = {}
         self.mecha_nodes = []
         self.board_node = None
+        self.disc_node = None
+        self.disc_manual_obj = None  # Referencia al ManualObject del disco
         
         self.current_tejo_name = None
         self.waiting_for_stop = False
@@ -64,8 +69,23 @@ class TejoGame(PUJ_Ogre.BaseApplicationWithVTK):
         self.launch_angle = 45
         self.last_launch_force = 75
         
+        # Posición del disco central
+        angle_rad = math.radians(BOARD_ANGLE)
+        board_center_x = (BOARD_LENGTH/2) * math.cos(angle_rad)
+        board_center_height = (BOARD_LENGTH/2) * math.sin(angle_rad)
+        self.disc_position = [board_center_x, board_center_height, 0]
+        
         self.mecha_positions = []
         self.auto_launch = False
+        
+        # Inicializar sistema de sonido
+        pygame.mixer.init()
+        explosion_path = os.path.join(cur_dir, 'resources', 'explosion-fx.mp3')
+        try:
+            self.explosion_sound = pygame.mixer.Sound(explosion_path)
+        except:
+            print(f"Advertencia: No se pudo cargar {explosion_path}")
+            self.explosion_sound = None
         
         self.ui_power_input = None
         self.ui_angle_input = None
@@ -195,6 +215,35 @@ class TejoGame(PUJ_Ogre.BaseApplicationWithVTK):
             math.sin(angle_rad/2)
         )
         self.board_node.setOrientation(rotation)
+        
+        # Crear disco blanco circular en el centro del tablero
+        disc_radius = 0.075  # 7.5cm de radio (15cm de diámetro)
+        disc_height = 0.002  # Muy delgado
+        disc_data = self._cone(disc_radius, disc_height, 40, top_radius=disc_radius)  # Cilindro = disco
+        
+        self.disc_node = self._createManualObject(
+            disc_data,
+            'center_disc',
+            'BaseWhiteNoLighting'
+        )
+        
+        # Guardar referencia al ManualObject directamente desde el SceneManager
+        self.disc_manual_obj = self.m_SceneMgr.getManualObject('center_disc')
+        
+        # Posicionar el disco en el centro del tablero (relativo al mundo)
+        angle_rad = math.radians(BOARD_ANGLE)
+        board_center_height = (BOARD_LENGTH/2) * math.sin(angle_rad)
+        board_center_x = (BOARD_LENGTH/2) * math.cos(angle_rad)
+        self.disc_node.setPosition([board_center_x, board_center_height + 0.005, 0])
+        
+        # Rotar el disco igual que el tablero
+        rotation = Ogre.Quaternion(
+            math.cos(angle_rad/2), 
+            0, 
+            0, 
+            math.sin(angle_rad/2)
+        )
+        self.disc_node.setOrientation(rotation)
     
     def _create_mechas(self):
         mecha_positions_local = [
@@ -227,6 +276,7 @@ class TejoGame(PUJ_Ogre.BaseApplicationWithVTK):
         status = self.game_state.get_game_status()
         current_team = self.game_state.current_team
         team_name = status['current_team']
+        # Usar el contador total de tejos lanzados para el nombre único
         tejo_number = self.game_state.tejos_launched[current_team]
         
         tejos_remaining = status['tejos_remaining'][team_name]
@@ -300,42 +350,80 @@ class TejoGame(PUJ_Ogre.BaseApplicationWithVTK):
         return True
     
     def _procesar_puntuacion(self):
-        pos, _ = self.physics.get_tejo_transform(self.current_tejo_name)
+        pos, orn = self.physics.get_tejo_transform(self.current_tejo_name)
         
-        collisions = self.physics.check_mecha_collisions()
-        mecha_hits = [idx for (name, idx) in collisions if name == self.current_tejo_name]
+        # Verificar si golpeó el bocín
+        disc_hit = self.scoring.check_disc_collision(pos, self.disc_position, threshold=0.15)
         
-        board_bounds = self.scoring.get_board_bounds_from_angle(
-            BOARD_LENGTH, 
-            BOARD_WIDTH, 
-            BOARD_ANGLE
-        )
+        # Si golpeó el bocín, tirar dado para ver si estalla la mecha (20%)
+        disc_exploded = False
+        if disc_hit:
+            disc_exploded = self.scoring.roll_explosion()
+            if disc_exploded:
+                # Efecto visual de mecha (cambiar color temporalmente)
+                if self.disc_manual_obj:
+                    self.disc_manual_obj.setMaterialName(0, 'red_material')
+                # Reproducir sonido de explosión
+                if self.explosion_sound:
+                    self.explosion_sound.play()
         
-        on_board = self.scoring.is_on_board(pos, board_bounds)
-        
-        points = self.scoring.calculate_points(
-            pos, 
-            self.mecha_positions, 
-            mecha_hits, 
-            on_board,
-            self.last_launch_force
-        )
-        
-        breakdown = self.scoring.get_score_breakdown(
+        # Calcular puntos con el nuevo sistema
+        points, details = self.scoring.calculate_points(
             pos,
-            self.mecha_positions,
-            mecha_hits,
-            on_board,
-            self.last_launch_force
+            self.disc_position,
+            orn,
+            disc_hit,
+            disc_exploded
         )
         
+        # Añadir puntos al equipo actual
         current_team = self.game_state.current_team
         self.game_state.add_score(current_team, points)
         
-        team_scores = [self.game_state.scores[0], self.game_state.scores[1]]
-        self.ui_system.show_score_info(breakdown, team_scores, current_team)
+        # Registrar figura si se logró mecha, embocinada o moñona (puntos > 0)
+        if points > 0:
+            self.game_state.register_figura(current_team)
         
+        # Calcular y registrar distancia al bocín para el punto de proximidad del turno
+        import math
+        distance_to_disc = math.sqrt(
+            (pos[0] - self.disc_position[0])**2 + 
+            (pos[2] - self.disc_position[2])**2
+        )
+        self.game_state.register_tejo_for_turn(current_team, pos, distance_to_disc)
+        
+        # Mostrar información
+        print("\n" + "="*50)
+        print(f"RONDA {self.game_state.round_number}")
+        print(f"EQUIPO {'A' if current_team == 0 else 'B'} - Puntos obtenidos: {points}")
+        for detail in details:
+            print(f"  - {detail}")
+        print(f"  - Distancia al bocín: {distance_to_disc:.3f}m")
+        print("="*50)
+        
+        team_scores = [self.game_state.scores[0], self.game_state.scores[1]]
+        self.ui_system.update_score_display(team_scores[0], team_scores[1])
+        
+        # Restaurar color del disco después de 1 segundo
+        if disc_exploded:
+            import threading
+            def restore_disc():
+                import time
+                time.sleep(1)
+                if self.disc_manual_obj:
+                    self.disc_manual_obj.setMaterialName(0, 'BaseWhiteNoLighting')
+            threading.Thread(target=restore_disc, daemon=True).start()
+        
+        # Cambiar de turno
         self.game_state.next_turn()
+        
+        # Si ambos equipos lanzaron en este turno, otorgar punto de proximidad
+        proximity_result = self.game_state.award_closest_tejo_point_for_turn()
+        if proximity_result:
+            winning_team, winning_dist = proximity_result
+            print(f"\n🎯 ¡MANO! Equipo {'A' if winning_team == 0 else 'B'} tiene el tejo más cercano (+1 punto, distancia: {winning_dist:.3f}m)\n")
+            team_scores = [self.game_state.scores[0], self.game_state.scores[1]]
+            self.ui_system.update_score_display(team_scores[0], team_scores[1])
     
     def _mostrar_resultado_final(self):
         status = self.game_state.get_game_status()
@@ -357,6 +445,48 @@ class TejoGame(PUJ_Ogre.BaseApplicationWithVTK):
             status['scores']['A'], 
             status['scores']['B']
         )
+    
+    def _reiniciar_juego(self):
+        """Reinicia el juego completamente"""
+        print("\n" + "="*50)
+        print("REINICIANDO JUEGO...")
+        print("="*50 + "\n")
+        
+        # Limpiar física - remover todos los cuerpos de tejos
+        import pybullet
+        for tejo_body in self.physics.tejo_bodies.values():
+            pybullet.removeBody(tejo_body)
+        self.physics.tejo_bodies = {}
+        
+        # Limpiar nodos visuales de tejos
+        for tejo_name, tejo_node in self.tejo_nodes.items():
+            self.m_SceneMgr.destroySceneNode(tejo_node)
+            try:
+                self.m_SceneMgr.destroyManualObject(tejo_name)
+            except:
+                pass
+        self.tejo_nodes = {}
+        
+        # Resetear estado del juego
+        self.game_state.reset()
+        self.game_state.start_game()
+        
+        # Resetear variables de control
+        self.current_tejo_name = None
+        self.waiting_for_stop = False
+        self.wait_counter = 0
+        self.tejo_ready = False
+        self.launch_power = 75
+        self.launch_angle = 45
+        
+        # Actualizar UI
+        self.ui_system.update_power(self.launch_power)
+        self.ui_system.update_angle(self.launch_angle)
+        self.ui_system.update_team_display("A", 0, TEJOS_PER_TEAM)
+        self.ui_system.update_score_display(0, 0)
+        
+        # Crear primer tejo
+        self._crear_tejo_para_lanzar()
     
     def frameRenderingQueued(self, evt):
         r = super(PUJ_Ogre.BaseApplicationWithVTK, self).frameRenderingQueued(evt)
