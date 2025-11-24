@@ -10,6 +10,7 @@ import game
 from game.physics_engine import PhysicsEngine
 from game.game_state import GameState
 from game.scoring_system import ScoringSystem
+from game.ui_system import UISystem
 from game.constants import *
 
 class TejoInputListener(OgreBites.InputListener):
@@ -25,17 +26,21 @@ class TejoInputListener(OgreBites.InputListener):
         if evt.keysym.sym == 119:  # W
             self.game.launch_power = min(100, self.game.launch_power + 5)
             print(f"Fuerza: {self.game.launch_power}")
+            self.game.ui_system.update_power(self.game.launch_power)
         elif evt.keysym.sym == 115:  # S
             self.game.launch_power = max(50, self.game.launch_power - 5)
             print(f"Fuerza: {self.game.launch_power}")
+            self.game.ui_system.update_power(self.game.launch_power)
         
-        # Ajustar ángulo con teclas A/D
-        elif evt.keysym.sym == 97:  # A
+        # Ajustar ángulo con flechas arriba/abajo
+        elif evt.keysym.sym == OgreBites.SDLK_UP:  # Flecha arriba
             self.game.launch_angle = min(70, self.game.launch_angle + 5)
             print(f"Ángulo: {self.game.launch_angle}")
-        elif evt.keysym.sym == 100:  # D
+            self.game.ui_system.update_angle(self.game.launch_angle)
+        elif evt.keysym.sym == OgreBites.SDLK_DOWN:  # Flecha abajo
             self.game.launch_angle = max(20, self.game.launch_angle - 5)
             print(f"Ángulo: {self.game.launch_angle}")
+            self.game.ui_system.update_angle(self.game.launch_angle)
         
         # Lanzar con ESPACIO
         elif evt.keysym.sym == 32:  # SPACE
@@ -61,6 +66,7 @@ class TejoGame(PUJ_Ogre.BaseApplicationWithVTK):
         self.physics = PhysicsEngine()
         self.game_state = GameState()
         self.scoring = ScoringSystem()
+        self.ui_system = None  # Se inicializará después de crear el SceneManager
         
         self.tejo_nodes = {}
         self.mecha_nodes = []
@@ -184,6 +190,9 @@ class TejoGame(PUJ_Ogre.BaseApplicationWithVTK):
             cam_style=OgreBites.CS_MANUAL
         )
         
+        # Guardar referencia a la cámara para la UI
+        self.main_camera = self.m_SceneMgr.getCamera('MainCamera')
+        
         light = self.m_SceneMgr.createLight('MainLight')
         light.setType(Ogre.Light.LT_DIRECTIONAL)
         light.setDiffuseColour(1.0, 1.0, 0.95)
@@ -203,6 +212,11 @@ class TejoGame(PUJ_Ogre.BaseApplicationWithVTK):
 
         self.game_state.start_game()
         self._crear_tejo_para_lanzar()
+        
+        # Inicializar el sistema de UI con la cámara
+        self.ui_system = UISystem(self.m_SceneMgr, self.main_camera)
+        self.ui_system.initialize()
+        self.ui_system.update(self.launch_power, self.launch_angle)
         
         # Crear y registrar el listener de entrada personalizado
         self.input_listener = TejoInputListener(self)
