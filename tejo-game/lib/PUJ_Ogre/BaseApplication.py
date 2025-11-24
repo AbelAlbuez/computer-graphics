@@ -64,7 +64,7 @@ class BaseApplication( OgreBites.ApplicationContext ):
   '''
   def setup( self, mgr_type = 'DefaultSceneManager' ):
     self._initSceneManager( mgr_type )
-    self.setWindowGrab( True )
+    self.setWindowGrab( False )
     self._loadScene( )
   # end def
 

@@ -12,6 +12,47 @@ from game.game_state import GameState
 from game.scoring_system import ScoringSystem
 from game.constants import *
 
+class TejoInputListener(OgreBites.InputListener):
+    def __init__(self, game):
+        OgreBites.InputListener.__init__(self)
+        self.game = game
+    # end def
+    
+    def keyPressed(self, evt):
+        print(f"Tecla presionada: {evt.keysym.sym}")
+        
+        # Ajustar fuerza con teclas W/S
+        if evt.keysym.sym == 119:  # W
+            self.game.launch_power = min(100, self.game.launch_power + 5)
+            print(f"Fuerza: {self.game.launch_power}")
+        elif evt.keysym.sym == 115:  # S
+            self.game.launch_power = max(50, self.game.launch_power - 5)
+            print(f"Fuerza: {self.game.launch_power}")
+        
+        # Ajustar ángulo con teclas A/D
+        elif evt.keysym.sym == 97:  # A
+            self.game.launch_angle = min(70, self.game.launch_angle + 5)
+            print(f"Ángulo: {self.game.launch_angle}")
+        elif evt.keysym.sym == 100:  # D
+            self.game.launch_angle = max(20, self.game.launch_angle - 5)
+            print(f"Ángulo: {self.game.launch_angle}")
+        
+        # Lanzar con ESPACIO
+        elif evt.keysym.sym == 32:  # SPACE
+            if self.game.tejo_ready:
+                print(f"Lanzando con Fuerza={self.game.launch_power}, Ángulo={self.game.launch_angle}")
+                self.game._ejecutar_lanzamiento(self.game.launch_power, self.game.launch_angle)
+            else:
+                print("Tejo no está listo")
+        
+        # ESC para salir
+        elif evt.keysym.sym == OgreBites.SDLK_ESCAPE:
+            self.game.getRoot().queueEndRendering()
+        
+        return True
+    # end def
+# end class
+
 class TejoGame(PUJ_Ogre.BaseApplicationWithVTK):
     def __init__(self):
         super(TejoGame, self).__init__('Juego de Tejo - Deporte Colombiano', '')
@@ -33,11 +74,23 @@ class TejoGame(PUJ_Ogre.BaseApplicationWithVTK):
         self.tejo_ready = False
         self.dragging = False
         self.drag_start_x = 0
-        self.launch_power = 0
+        self.launch_power = 75
         self.launch_angle = 45
         
         self.mecha_positions = []
-        self.auto_launch = True
+        self.auto_launch = False
+        
+        # UI elements
+        self.ui_power_input = None
+        self.ui_angle_input = None
+        self.ui_launch_button = None
+        self.ui_tray = None
+        
+        # UI elements
+        self.ui_power_input = None
+        self.ui_angle_input = None
+        self.ui_launch_button = None
+        self.ui_tray = None
     # end def
 
     def _cone(self, base_radius, height, segments, top_radius=0.0):
@@ -150,6 +203,11 @@ class TejoGame(PUJ_Ogre.BaseApplicationWithVTK):
 
         self.game_state.start_game()
         self._crear_tejo_para_lanzar()
+        
+        # Crear y registrar el listener de entrada personalizado
+        self.input_listener = TejoInputListener(self)
+        self.addInputListener(self.input_listener)
+    # end def
     # end def
 
     def _create_board_visual(self):
@@ -285,6 +343,16 @@ class TejoGame(PUJ_Ogre.BaseApplicationWithVTK):
         return True
     # end def
     
+    def buttonHit(self, button):
+        """Maneja clics en botones de la UI"""
+        if button.getName() == 'LaunchButton' and self.tejo_ready:
+            power = self.ui_power_input.getValue()
+            angle = self.ui_angle_input.getValue()
+            self._ejecutar_lanzamiento(power, angle)
+        # end if
+        return True
+    # end def
+    
     def _procesar_puntuacion(self):
         pos, _ = self.physics.get_tejo_transform(self.current_tejo_name)
         
@@ -339,10 +407,6 @@ class TejoGame(PUJ_Ogre.BaseApplicationWithVTK):
                 Ogre.Quaternion(orn[3], orn[0], orn[1], orn[2])
             )
         # end for
-
-        if self.auto_launch and self.tejo_ready and not self.waiting_for_stop:
-            self._ejecutar_lanzamiento(power=85, angle=45)
-        # end if
         
         if self.waiting_for_stop and self.current_tejo_name:
             if self.physics.is_tejo_stopped(self.current_tejo_name):
