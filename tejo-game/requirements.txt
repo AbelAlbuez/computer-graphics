@@ -2,6 +2,7 @@
 ogre-python==14.4.1
 vtk>=9.0.0
 pybullet
+pygame
 
 # Python development tools
 pylint
