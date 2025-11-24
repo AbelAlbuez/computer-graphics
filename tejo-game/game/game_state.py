@@ -41,31 +41,21 @@ class GameState:
             self.current_phase = GamePhase.AIMING
     
     def add_score(self, team, points):
-        if team < 0 or team >= NUM_TEAMS:
-            return
-        
-        self.scores[team] += points
+        if 0 <= team < NUM_TEAMS:
+            self.scores[team] += points
     
     def is_game_over(self):
-        both_teams_finished = all(
-            launched >= TEJOS_PER_TEAM 
-            for launched in self.tejos_launched
-        )
-        
-        return both_teams_finished or self.current_phase == GamePhase.GAME_OVER
+        return (all(launched >= TEJOS_PER_TEAM for launched in self.tejos_launched) or
+                self.current_phase == GamePhase.GAME_OVER)
     
     def get_current_team_name(self):
         return self._get_team_name(self.current_team)
     
     def get_score(self, team):
-        if team < 0 or team >= NUM_TEAMS:
-            return 0
-        return self.scores[team]
+        return self.scores[team] if 0 <= team < NUM_TEAMS else 0
     
     def get_tejos_remaining(self, team):
-        if team < 0 or team >= NUM_TEAMS:
-            return 0
-        return TEJOS_PER_TEAM - self.tejos_launched[team]
+        return TEJOS_PER_TEAM - self.tejos_launched[team] if 0 <= team < NUM_TEAMS else 0
     
     def _get_team_name(self, team):
         return "A" if team == 0 else "B"
@@ -79,9 +69,7 @@ class GameState:
             self.winner = None
     
     def get_winner_name(self):
-        if self.winner is None:
-            return "Empate"
-        return self._get_team_name(self.winner)
+        return "Empate" if self.winner is None else self._get_team_name(self.winner)
     
     def reset(self):
         self.current_phase = GamePhase.MENU

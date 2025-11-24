@@ -19,7 +19,6 @@ class PhysicsEngine:
             self.create_ground()
 
     def create_ground(self):
-        """Crea un plano de suelo para que las esferas reboten"""
         ground_shape = pybullet.createCollisionShape(
             pybullet.GEOM_PLANE,
             planeNormal=[0, 1, 0]
@@ -41,7 +40,6 @@ class PhysicsEngine:
         return self.ground_body
 
     def create_board(self):
-        """Crea el tablero inclinado con colisiones"""
         half_extents = [BOARD_LENGTH/2, 0.05, BOARD_WIDTH/2]
 
         board_shape = pybullet.createCollisionShape(
@@ -50,10 +48,8 @@ class PhysicsEngine:
         )
 
         angle_rad = math.radians(BOARD_ANGLE)
-        # Rotación alrededor del eje Z para inclinar el tablero
         orientation = pybullet.getQuaternionFromEuler([0, 0, angle_rad])
 
-        # Posición del centro del tablero inclinado
         board_center_height = (BOARD_LENGTH/2) * math.sin(angle_rad)
         board_center_x = (BOARD_LENGTH/2) * math.cos(angle_rad)
         position = [board_center_x, board_center_height, 0]
@@ -77,25 +73,17 @@ class PhysicsEngine:
         return self.board_body
     
     def create_tejo(self, name, position):
-        # Crear forma de cono truncado usando una malla convexa
-        # El tejo real es como la base de un cono
         vertices = []
-        num_vertices = 16  # Número de vértices en el círculo
+        num_vertices = 16
 
-        # Vértices de la base (círculo inferior)
         for i in range(num_vertices):
             angle = 2 * math.pi * i / num_vertices
-            x = TEJO_RADIUS * math.cos(angle)
-            z = TEJO_RADIUS * math.sin(angle)
-            vertices.append([x, 0, z])
+            vertices.append([TEJO_RADIUS * math.cos(angle), 0, TEJO_RADIUS * math.sin(angle)])
 
-        # Vértices de la parte superior (círculo más pequeño)
-        top_radius = TEJO_RADIUS * 0.3  # Radio superior más pequeño
+        top_radius = TEJO_RADIUS * 0.3
         for i in range(num_vertices):
             angle = 2 * math.pi * i / num_vertices
-            x = top_radius * math.cos(angle)
-            z = top_radius * math.sin(angle)
-            vertices.append([x, TEJO_HEIGHT, z])
+            vertices.append([top_radius * math.cos(angle), TEJO_HEIGHT, top_radius * math.sin(angle)])
 
         tejo_shape = pybullet.createCollisionShape(
             pybullet.GEOM_MESH,

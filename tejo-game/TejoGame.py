@@ -1,10 +1,9 @@
-import os, sys, random
-cur_dir = os.path.dirname( os.path.abspath( __file__ ) )
-imp_dir = os.path.abspath( os.path.join( cur_dir, './lib' ) )
-sys.path.append( imp_dir )
+import os, sys, random, math
+cur_dir = os.path.dirname(os.path.abspath(__file__))
+imp_dir = os.path.abspath(os.path.join(cur_dir, './lib'))
+sys.path.append(imp_dir)
 import pybullet, Ogre, PUJ_Ogre
 import Ogre.Bites as OgreBites
-import math
 
 import game
 from game.physics_engine import PhysicsEngine
@@ -17,46 +16,27 @@ class TejoInputListener(OgreBites.InputListener):
     def __init__(self, game):
         OgreBites.InputListener.__init__(self)
         self.game = game
-    # end def
     
     def keyPressed(self, evt):
-        print(f"Tecla presionada: {evt.keysym.sym}")
-        
-        # Ajustar fuerza con teclas W/S
         if evt.keysym.sym == 119:  # W
             self.game.launch_power = min(100, self.game.launch_power + 5)
-            print(f"Fuerza: {self.game.launch_power}")
             self.game.ui_system.update_power(self.game.launch_power)
         elif evt.keysym.sym == 115:  # S
             self.game.launch_power = max(50, self.game.launch_power - 5)
-            print(f"Fuerza: {self.game.launch_power}")
             self.game.ui_system.update_power(self.game.launch_power)
-        
-        # Ajustar ángulo con flechas arriba/abajo
-        elif evt.keysym.sym == OgreBites.SDLK_UP:  # Flecha arriba
+        elif evt.keysym.sym == OgreBites.SDLK_UP:
             self.game.launch_angle = min(70, self.game.launch_angle + 5)
-            print(f"Ángulo: {self.game.launch_angle}")
             self.game.ui_system.update_angle(self.game.launch_angle)
-        elif evt.keysym.sym == OgreBites.SDLK_DOWN:  # Flecha abajo
+        elif evt.keysym.sym == OgreBites.SDLK_DOWN:
             self.game.launch_angle = max(20, self.game.launch_angle - 5)
-            print(f"Ángulo: {self.game.launch_angle}")
             self.game.ui_system.update_angle(self.game.launch_angle)
-        
-        # Lanzar con ESPACIO
         elif evt.keysym.sym == 32:  # SPACE
             if self.game.tejo_ready:
-                print(f"Lanzando con Fuerza={self.game.launch_power}, Ángulo={self.game.launch_angle}")
                 self.game._ejecutar_lanzamiento(self.game.launch_power, self.game.launch_angle)
-            else:
-                print("Tejo no está listo")
-        
-        # ESC para salir
         elif evt.keysym.sym == OgreBites.SDLK_ESCAPE:
             self.game.getRoot().queueEndRendering()
         
         return True
-    # end def
-# end class
 
 class TejoGame(PUJ_Ogre.BaseApplicationWithVTK):
     def __init__(self):
@@ -66,7 +46,7 @@ class TejoGame(PUJ_Ogre.BaseApplicationWithVTK):
         self.physics = PhysicsEngine()
         self.game_state = GameState()
         self.scoring = ScoringSystem()
-        self.ui_system = None  # Se inicializará después de crear el SceneManager
+        self.ui_system = None
         
         self.tejo_nodes = {}
         self.mecha_nodes = []
@@ -82,89 +62,53 @@ class TejoGame(PUJ_Ogre.BaseApplicationWithVTK):
         self.drag_start_x = 0
         self.launch_power = 75
         self.launch_angle = 45
+        self.last_launch_force = 75
         
         self.mecha_positions = []
         self.auto_launch = False
         
-        # UI elements
         self.ui_power_input = None
         self.ui_angle_input = None
         self.ui_launch_button = None
         self.ui_tray = None
-        
-        # UI elements
-        self.ui_power_input = None
-        self.ui_angle_input = None
-        self.ui_launch_button = None
-        self.ui_tray = None
-    # end def
 
     def _cone(self, base_radius, height, segments, top_radius=0.0):
-        """Crea un cono truncado (o cono completo si top_radius=0)"""
-        P = []  # Posiciones
-        N = []  # Normales
-        T = []  # Coordenadas de textura
-        C = []  # Conectividad (triángulos)
+        P, N, T, C = [], [], [], []
 
-        # Vértices de la base inferior (y = 0)
         for i in range(segments):
             angle = 2 * math.pi * i / segments
-            x = base_radius * math.cos(angle)
-            z = base_radius * math.sin(angle)
-            P.append([x, 0, z])
-            N.append([0, -1, 0])  # Normal hacia abajo
+            P.append([base_radius * math.cos(angle), 0, base_radius * math.sin(angle)])
+            N.append([0, -1, 0])
             T.append([i / segments, 0])
-        # end for
 
-        # Vértices de la parte superior (y = height)
         for i in range(segments):
             angle = 2 * math.pi * i / segments
-            x = top_radius * math.cos(angle)
-            z = top_radius * math.sin(angle)
-            P.append([x, height, z])
-            # Normal calculada para el lado del cono
             nx = math.cos(angle)
             nz = math.sin(angle)
             ny = (base_radius - top_radius) / height
             length = math.sqrt(nx*nx + ny*ny + nz*nz)
+            P.append([top_radius * math.cos(angle), height, top_radius * math.sin(angle)])
             N.append([nx/length, ny/length, nz/length])
             T.append([i / segments, 1])
-        # end for
 
-        # Centro de la base inferior
         center_bottom = len(P)
         P.append([0, 0, 0])
         N.append([0, -1, 0])
         T.append([0.5, 0.5])
 
-        # Centro de la parte superior
         center_top = len(P)
         P.append([0, height, 0])
         N.append([0, 1, 0])
         T.append([0.5, 0.5])
 
-        # Triángulos de la base inferior
         for i in range(segments):
             next_i = (i + 1) % segments
             C.append([center_bottom, next_i, i])
-        # end for
-
-        # Triángulos de la parte superior
-        for i in range(segments):
-            next_i = (i + 1) % segments
             C.append([center_top, segments + i, segments + next_i])
-        # end for
-
-        # Triángulos de los lados
-        for i in range(segments):
-            next_i = (i + 1) % segments
-            # Dos triángulos por segmento lateral
             C.append([i, next_i, segments + i])
             C.append([next_i, segments + next_i, segments + i])
-        # end for
 
         return (P, N, T, C)
-    # end def
 
     def _loadScene(self):
         self.physics.initialize()
@@ -175,22 +119,16 @@ class TejoGame(PUJ_Ogre.BaseApplicationWithVTK):
         board_center_height = (BOARD_LENGTH/2) * math.sin(angle_rad)
         board_center_x = (BOARD_LENGTH/2) * math.cos(angle_rad)
         camera_distance = 15.0
-        camera_height = 1.5  # Altura de la cámara a nivel de los ojos
-        camera_position = [
-            board_center_x - camera_distance,
-            camera_height,
-            0.0
-        ]
+        camera_height = 1.5
 
         self._createCamera(
             top_speed=3,
-            position=camera_position,
-            look_at=[board_center_x, camera_height, 0],  # Mismo nivel Y
+            position=[board_center_x - camera_distance, camera_height, 0.0],
+            look_at=[board_center_x, camera_height, 0],
             background=[0.53, 0.81, 0.98],
             cam_style=OgreBites.CS_MANUAL
         )
         
-        # Guardar referencia a la cámara para la UI
         self.main_camera = self.m_SceneMgr.getCamera('MainCamera')
         
         light = self.m_SceneMgr.createLight('MainLight')
@@ -209,20 +147,21 @@ class TejoGame(PUJ_Ogre.BaseApplicationWithVTK):
         ground_node.setPosition([0, -0.05, 0])
         
         self._create_board_visual()
+        self._create_mechas()
 
         self.game_state.start_game()
-        self._crear_tejo_para_lanzar()
         
-        # Inicializar el sistema de UI con la cámara
         self.ui_system = UISystem(self.m_SceneMgr, self.main_camera)
         self.ui_system.initialize()
         self.ui_system.update(self.launch_power, self.launch_angle)
         
-        # Crear y registrar el listener de entrada personalizado
+        self.ui_system.update_team_display("A", 0, TEJOS_PER_TEAM)
+        self.ui_system.update_score_display(0, 0)
+        
+        self._crear_tejo_para_lanzar()
+        
         self.input_listener = TejoInputListener(self)
         self.addInputListener(self.input_listener)
-    # end def
-    # end def
 
     def _create_board_visual(self):
         limites = [
@@ -256,7 +195,6 @@ class TejoGame(PUJ_Ogre.BaseApplicationWithVTK):
             math.sin(angle_rad/2)
         )
         self.board_node.setOrientation(rotation)
-    # end def
     
     def _create_mechas(self):
         mecha_positions_local = [
@@ -280,19 +218,23 @@ class TejoGame(PUJ_Ogre.BaseApplicationWithVTK):
             mecha_node.setPosition(pos)
             
             self.mecha_nodes.append(mecha_node)
-        # end for
-    # end def
     
     def _crear_tejo_para_lanzar(self):
         if self.game_state.is_game_over():
             self._mostrar_resultado_final()
             return
-        # end if
         
         status = self.game_state.get_game_status()
         current_team = self.game_state.current_team
         team_name = status['current_team']
         tejo_number = self.game_state.tejos_launched[current_team]
+        
+        tejos_remaining = status['tejos_remaining'][team_name]
+        self.ui_system.update_team_display(team_name, current_team, tejos_remaining)
+        self.ui_system.update_score_display(
+            self.game_state.scores[0], 
+            self.game_state.scores[1]
+        )
         
         self.current_tejo_name = f"tejo_{team_name}_{tejo_number}"
 
@@ -303,12 +245,11 @@ class TejoGame(PUJ_Ogre.BaseApplicationWithVTK):
 
         self.physics.create_tejo(self.current_tejo_name, start_position)
 
-        # Crear visual de cono truncado
         tejo_visual_radius = TEJO_RADIUS * 3.0
         tejo_visual_height = TEJO_HEIGHT * 3.0
         tejo_data = self._cone(tejo_visual_radius, tejo_visual_height, 30, top_radius=tejo_visual_radius * 0.3)
 
-        material = 'metal_material'
+        material = 'red_material' if current_team == 0 else 'green_material'
 
         tejo_node = self._createManualObject(
             tejo_data,
@@ -319,27 +260,25 @@ class TejoGame(PUJ_Ogre.BaseApplicationWithVTK):
         
         self.tejo_nodes[self.current_tejo_name] = tejo_node
         self.tejo_ready = True
-    # end def
     
     def _ejecutar_lanzamiento(self, power, angle):
         if not self.tejo_ready or not self.current_tejo_name:
             return
-        # end if
+        
+        self.last_launch_force = power
+        self.ui_system.show_launch_info(power, angle)
         
         self.physics.launch_tejo(self.current_tejo_name, power, angle)
         
         self.tejo_ready = False
         self.waiting_for_stop = True
         self.wait_counter = 0
-    # end def
     
     def mousePressed(self, evt):
         if self.tejo_ready and evt.button == OgreBites.BUTTON_LEFT:
             self.dragging = True
             self.drag_start_x = evt.x
-        # end if
         return True
-    # end def
     
     def mouseReleased(self, evt):
         if self.dragging and self.tejo_ready:
@@ -348,24 +287,17 @@ class TejoGame(PUJ_Ogre.BaseApplicationWithVTK):
             if drag_distance > 10:
                 power = min(100, max(50, drag_distance * 0.5))
                 angle = 45
-                
                 self._ejecutar_lanzamiento(power, angle)
-            # end if
             
             self.dragging = False
-        # end if
         return True
-    # end def
     
     def buttonHit(self, button):
-        """Maneja clics en botones de la UI"""
         if button.getName() == 'LaunchButton' and self.tejo_ready:
             power = self.ui_power_input.getValue()
             angle = self.ui_angle_input.getValue()
             self._ejecutar_lanzamiento(power, angle)
-        # end if
         return True
-    # end def
     
     def _procesar_puntuacion(self):
         pos, _ = self.physics.get_tejo_transform(self.current_tejo_name)
@@ -385,29 +317,46 @@ class TejoGame(PUJ_Ogre.BaseApplicationWithVTK):
             pos, 
             self.mecha_positions, 
             mecha_hits, 
-            on_board
+            on_board,
+            self.last_launch_force
         )
         
         breakdown = self.scoring.get_score_breakdown(
             pos,
             self.mecha_positions,
             mecha_hits,
-            on_board
+            on_board,
+            self.last_launch_force
         )
         
         current_team = self.game_state.current_team
         self.game_state.add_score(current_team, points)
         
+        team_scores = [self.game_state.scores[0], self.game_state.scores[1]]
+        self.ui_system.show_score_info(breakdown, team_scores, current_team)
+        
         self.game_state.next_turn()
-    # end def
     
     def _mostrar_resultado_final(self):
         status = self.game_state.get_game_status()
-        print(f"\nPartida Finalizada")
+        print("\n" + "="*50)
+        print("¡¡¡ PARTIDA FINALIZADA !!!")
+        print("="*50)
         print(f"Equipo A: {status['scores']['A']} puntos")
         print(f"Equipo B: {status['scores']['B']} puntos")
-        print(f"Ganador: {status['winner']}")
-    # end def
+        print("-"*50)
+        
+        if status['winner'] == "Empate":
+            print(f"RESULTADO: ¡EMPATE!")
+        else:
+            print(f"GANADOR: ¡¡¡EQUIPO {status['winner']}!!!")
+        
+        print("="*50)
+        
+        self.ui_system.update_score_display(
+            status['scores']['A'], 
+            status['scores']['B']
+        )
     
     def frameRenderingQueued(self, evt):
         r = super(PUJ_Ogre.BaseApplicationWithVTK, self).frameRenderingQueued(evt)
@@ -420,7 +369,6 @@ class TejoGame(PUJ_Ogre.BaseApplicationWithVTK):
             tejo_node.setOrientation(
                 Ogre.Quaternion(orn[3], orn[0], orn[1], orn[2])
             )
-        # end for
         
         if self.waiting_for_stop and self.current_tejo_name:
             if self.physics.is_tejo_stopped(self.current_tejo_name):
@@ -433,19 +381,14 @@ class TejoGame(PUJ_Ogre.BaseApplicationWithVTK):
                     self.wait_counter = 0
                     
                     self._crear_tejo_para_lanzar()
-                # end if
-            # end if
-        # end if
+        
         return r
-    # end def
 
 
 def main(argv):
     app = TejoGame()
     app.go()
-    # end def
 
 
 if __name__ == '__main__':
     main(sys.argv)
-    # end if
