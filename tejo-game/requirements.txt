@@ -4,6 +4,11 @@ vtk>=9.0.0
 pybullet
 pygame
 
+# Dear ImGui para UI
+imgui[glfw]>=2.0.0
+PyOpenGL>=3.1.0
+PyOpenGL_accelerate
+
 # Python development tools
 pylint
 black
@@ -13,4 +18,3 @@ autopep8
 numpy
 setuptools
 wheel
-
