@@ -198,6 +198,17 @@ class PhysicsEngine:
         speed = math.sqrt(velocity[0]**2 + velocity[1]**2 + velocity[2]**2)
         return speed < threshold
     
+    def check_board_collision(self, tejo_name):
+        """Verifica si el tejo está en contacto con el tablero."""
+        if tejo_name not in self.tejo_bodies or self.board_body is None:
+            return False
+
+        contact_points = pybullet.getContactPoints(
+            bodyA=self.tejo_bodies[tejo_name],
+            bodyB=self.board_body
+        )
+        return len(contact_points) > 0
+
     def cleanup(self):
         if self.initialized:
             pybullet.disconnect()

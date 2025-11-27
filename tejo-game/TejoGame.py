@@ -79,12 +79,29 @@ class TejoGame(PUJ_Ogre.BaseApplicationWithVTK):
         self.auto_launch = False
         
         pygame.mixer.init()
-        explosion_path = os.path.join(cur_dir, 'resources', 'explosion-fx.mp3')
-        try:
-            self.explosion_sound = pygame.mixer.Sound(explosion_path)
-        except:
-            print(f"Advertencia: No se pudo cargar {explosion_path}")
-            self.explosion_sound = None
+
+        # Cargar efectos de sonido
+        self.sounds = {}
+        sound_files = {
+            'explosion': 'explosion-fx.mp3',
+            'win': 'win.mp3',
+            'embocinada': 'Embocinada.mp3',
+            'monona': 'Moñona.mp3',
+            'splat': 'splat.mp3'
+        }
+        for sound_name, filename in sound_files.items():
+            sound_path = os.path.join(cur_dir, 'resources', filename)
+            try:
+                self.sounds[sound_name] = pygame.mixer.Sound(sound_path)
+            except:
+                print(f"Advertencia: No se pudo cargar {sound_path}")
+                self.sounds[sound_name] = None
+
+        # Mantener referencia para compatibilidad
+        self.explosion_sound = self.sounds.get('explosion')
+
+        # Flag para controlar el sonido de impacto con el tablero
+        self.board_hit_played = False
 
     def _cone(self, base_radius, height, segments, top_radius=0.0):
         P, N, T, C = [], [], [], []
@@ -261,6 +278,7 @@ class TejoGame(PUJ_Ogre.BaseApplicationWithVTK):
         self.tejo_ready = False
         self.waiting_for_stop = True
         self.wait_counter = 0
+        self.board_hit_played = False
     
     def mousePressed(self, evt):
         if self.tejo_ready and evt.button == OgreBites.BUTTON_LEFT:
@@ -281,7 +299,7 @@ class TejoGame(PUJ_Ogre.BaseApplicationWithVTK):
     def _procesar_puntuacion(self):
         pos, orn = self.physics.get_tejo_transform(self.current_tejo_name)
         disc_hit = self.scoring.check_disc_collision(pos, self.disc_position, threshold=0.15)
-        
+
         disc_exploded = False
         if disc_hit:
             disc_exploded = self.scoring.roll_explosion()
@@ -290,8 +308,14 @@ class TejoGame(PUJ_Ogre.BaseApplicationWithVTK):
                     self.disc_manual_obj.setMaterialName(0, 'red_material')
                 if self.explosion_sound:
                     self.explosion_sound.play()
-        
+
         points, details = self.scoring.calculate_points(pos, self.disc_position, orn, disc_hit, disc_exploded)
+
+        # Reproducir sonidos según el resultado
+        if points == 9 and self.sounds.get('monona'):
+            self.sounds['monona'].play()
+        elif points == 6 and self.sounds.get('embocinada'):
+            self.sounds['embocinada'].play()
         current_team = self.game_state.current_team
         self.game_state.add_score(current_team, points)
         
@@ -341,6 +365,9 @@ class TejoGame(PUJ_Ogre.BaseApplicationWithVTK):
             print("RESULTADO: EMPATE!")
         else:
             print(f"GANADOR: EQUIPO {status['winner']}!")
+            # Reproducir sonido de victoria
+            if self.sounds.get('win'):
+                self.sounds['win'].play()
         print("="*50)
         self.ui_system.update_score_display(status['scores']['A'], status['scores']['B'])
     
@@ -380,14 +407,21 @@ class TejoGame(PUJ_Ogre.BaseApplicationWithVTK):
     
     def frameRenderingQueued(self, evt):
         r = super(PUJ_Ogre.BaseApplicationWithVTK, self).frameRenderingQueued(evt)
-        
+
         self.physics.step_simulation(evt.timeSinceLastFrame)
-        
+
         for tejo_name, tejo_node in self.tejo_nodes.items():
             pos, orn = self.physics.get_tejo_transform(tejo_name)
             tejo_node.setPosition(pos)
             tejo_node.setOrientation(Ogre.Quaternion(orn[3], orn[0], orn[1], orn[2]))
-        
+
+        # Detectar colisión con el tablero para reproducir sonido de impacto
+        if self.waiting_for_stop and self.current_tejo_name and not self.board_hit_played:
+            if self.physics.check_board_collision(self.current_tejo_name):
+                if self.sounds.get('splat'):
+                    self.sounds['splat'].play()
+                self.board_hit_played = True
+
         if self.waiting_for_stop and self.current_tejo_name:
             if self.physics.is_tejo_stopped(self.current_tejo_name):
                 self.wait_counter += 1
